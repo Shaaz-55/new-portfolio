@@ -1,0 +1,4 @@
+{
+  "modelUrl": null,
+  "note": "Place shaaz-avatar.glb in this directory, then set modelUrl to /models/shaaz-avatar.glb. The built-in avatar is an original illustrative stand-in, not a likeness of Shaaz."
+}
