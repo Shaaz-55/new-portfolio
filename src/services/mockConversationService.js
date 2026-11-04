@@ -14,9 +14,9 @@ export function normaliseQuestion(question) {
 const includesPhrase = (text, phrase) => (" " + text + " ").includes(" " + normaliseQuestion(phrase) + " ");
 const projectById = (id) => portfolioData.projects.find((project) => project.id === id);
 
-function reply(content, topic, { projectId = null, links = [], aspect = null, previousContext } = {}) {
+function reply(content, topic, { projectId = null, links = [], projects = [], aspect = null, previousContext } = {}) {
   return {
-    content, topic, source: "local-demo", links, aspect,
+    content, topic, source: "local-demo", links, projects, aspect,
     context: topic === "acknowledgement" || topic === "fallback"
       ? { ...(previousContext || emptyConversationContext()) }
       : { projectId, topic },
@@ -64,13 +64,21 @@ function projectResponse(project, text) {
   else if (aspect === "status") content = `${project.name}: ${project.status}. ${project.id === 'aayam' ? project.contribution : ''}`;
   else if (aspect === "monetisation") content = project.monetisation || `I haven't supplied an executed business model for ${project.name}. Hypothetically, I'd first validate the problem and repeated use before testing willingness to pay; this is a proposal, not revenue already earned.`;
   else content = project[aspect] || `That specific detail isn't supplied for ${project.name}. ${project.contribution}`;
-  return reply(content, project.id, { projectId: project.id, aspect });
+  const selectedImage = /\bdashboard\b/.test(text) ? "dashboard"
+    : /\bmaps?\b/.test(text) ? "map"
+      : /\bmessages?\b/.test(text) ? "messages"
+        : /\bmobile\b/.test(text) ? "mobile" : "cover";
+  return reply(content, project.id, {
+    projectId: project.id, aspect,
+    projects: project.images?.length ? [{ ...project, selectedImage }] : [],
+  });
 }
 
 function intentResponse(id, previousContext) {
   const links = id === "contact" ? Object.values(contactLinks) : contactLinks[id] ? [contactLinks[id]] : [];
   const projectId = ["featured", "challenge", "ai"].includes(id) ? "waste" : null;
-  return reply(mockResponses[id](), id, { links, projectId, previousContext });
+  const projects = id === "projects" ? portfolioData.projects.filter(project => project.images?.length) : [];
+  return reply(mockResponses[id](), id, { links, projects, projectId, previousContext });
 }
 
 export function findResponse(question, context = emptyConversationContext()) {
@@ -87,9 +95,11 @@ export function findResponse(question, context = emptyConversationContext()) {
   }
   const named = portfolioData.projects.filter((project) => project.aliases.some((alias) => includesPhrase(text, alias)));
   if (named.length > 1) {
-    return reply(named.map((project) => `${project.name} — ${project.description}\nTechnologies: ${project.technologies.join(', ')}.\nStatus: ${project.status}.`).join("\n\n") + "\n\nAsk about one project for its implementation or contribution.", "comparison");
+    return reply(named.map((project) => `${project.name} — ${project.description}\nTechnologies: ${project.technologies.join(', ')}.\nStatus: ${project.status}.`).join("\n\n") + "\n\nAsk about one project for its implementation or contribution.", "comparison", { projects: named.filter(project => project.images?.length) });
   }
   if (named.length === 1) return projectResponse(named[0], text);
+  if (/\b(show|see|list|explore)\b.*\bprojects\b/.test(text)) return intentResponse("projects", context);
+  if (/\b(show|see|view|display)\b.*\b(dashboard|maps?|messages?|mobile)\b/.test(text)) return projectResponse(projectById("unibuddy"), text);
   if (/\b(train|trained|training|fine tuned)\b.*\b(model|cnn|machine learning)\b/.test(text) || /\b(model|cnn)\b.*\btrain\w*/.test(text)) return projectResponse(projectById("waste"), text);
   if (/\b(you|your)\b.*\bhardware\b/.test(text)) return projectResponse(projectById("robotics"), text);
 

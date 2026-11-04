@@ -25,9 +25,9 @@ Open the local URL printed by Vite. `npm run preview` serves the production buil
 - Answers never autoplay, including when sound effects are enabled. Each completed answer has a **Listen to response** control and a visible stop control during playback. New playback cancels the previous playback; recording and playback cannot run together.
 - The avatar speaks only during actual synthesis playback events. Silent text streaming never moves its mouth. End, stop, error, and page hiding stop speech animation and the waveform.
 
-Browser recognition often uses the browser vendor's online speech service; availability depends on the browser, OS, permissions, and connection. Use HTTPS in deployment or localhost in development. The recording waveform is an animated activity indicator, not a measured audio level. Browser TTS voice quality and gender vary by OS; the adapter prefers an available English (India) voice at normal rate and pitch. Mouth movement is approximate, not phoneme-level lip sync.
+Browser recognition often uses the browser vendor's online speech service; availability depends on the browser, OS, permissions, and connection. Use HTTPS in deployment or localhost in development. The recording waveform is an animated activity indicator, not a measured audio level. Responses use Fish Audio MP3 playback through /api/tts; there is no browser TTS fallback. Mouth movement is approximate, not phoneme-level lip sync.
 
-No Wispr, ElevenLabs, paid API, API credentials, or speech backend is integrated.
+Fish Audio runs on the server using FISH_API_KEY and FISH_VOICE_ID. Replace the OLD local key in .env.local before live testing, and restart Vite. Vercel Production credentials do not update your local environment. Never use VITE_ prefixes for these secrets.
 
 ## Independent replacement boundaries
 
@@ -36,12 +36,12 @@ No Wispr, ElevenLabs, paid API, API credentials, or speech backend is integrated
 | Avatar asset     | `public/models/avatar-config.json`, `src/components/avatar/avatarModel.js` | Loader returns `{ root, kind, clips, config, dispose }`; the temporary model also exposes its animation rig.                                                         |
 | Avatar animation | `src/components/avatar/avatarAnimation.js`                                 | Factory accepts a loaded model and returns `{ update(time, state, reducedMotion), dispose }`. States: `idle`, `listening`, `thinking`, `speaking`.                   |
 | Recognition      | `src/services/browserRecognition.js`                                       | `{ supported, start({ onStart, onResult, onEnd, onError, lang }) }`; start returns `{ stop, cancel }`. Results are `{ final, interim }`; end supplies `{ text }`.    |
-| Speech output    | `src/services/browserSynthesis.js`                                         | `{ supported, speak(text, { onStart, onEnd, onError }) }`; speak returns `{ stop }`. Call `onStart` when audio actually starts, and `onEnd`/`onError` when it stops. |
-| Conversation     | `src/services/mockConversationService.js`                                  | `reply(question, { signal, context })` resolves `{ content, topic, links, context }`. Honour cancellation and keep history scoped to the conversation.               |
+| Speech output    | `src/services/fishAudioSynthesis.js`                                         | `{ supported, speak(text, { onStart, onEnd, onError }) }`; speak returns `{ stop }`. Call `onStart` when audio actually starts, and `onEnd`/`onError` when it stops. |
+| Conversation     | `src/services/mockConversationService.js`                                  | `reply(question, { signal, context })` resolves `{ content, topic, links, projects, context }`. Honour cancellation and keep history scoped to the conversation.               |
 
 The defaults are wired in `src/services/interactionServices.js`. `App` also accepts a `services` prop for provider injection. Voice hooks own UI state and lifecycle cleanup; providers own native resources and must suppress callbacks after cancellation. `DigitalAvatar` independently accepts `modelLoader`, `animationFactory`, and `configUrl` props. No speech service imports the avatar or conversation components.
 
-A future ElevenLabs adapter can call your backend and play the returned audio while implementing the same synthesis contract. Keep `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` on that backend. Do not place secrets in React code or `VITE_*` variables. No frontend changes to the avatar are needed.
+Fish Audio receives model s2.1-pro-free as an HTTP header, the environment's voice ID as reference_id, and format mp3. Compare the same model and clone in Fish Audio Playground. Robotic output there means the clone or source recording needs improvement; frontend code cannot repair that quality.
 
 ## Replace the temporary character
 
@@ -84,3 +84,25 @@ The existing `scripts/verify.mjs` and `scripts/verify-voice.mjs` were retained w
 ```sh
 node scripts/verify-recovery.mjs --url=http://127.0.0.1:5174
 ```
+
+
+## Fish Audio and UniBuddy verification
+
+All five UniBuddy WebP screenshots are present. Project responses carry structured gallery metadata; thumbnails select a larger preview and clicking the preview opens a keyboard-dismissible dialog. The Live Demo and GitHub URLs were supplied by the owner. Other projects retain their text descriptions.
+
+After replacing the old local key and confirming FISH_VOICE_ID, run:
+
+```sh
+npm run dev
+# In another terminal:
+node scripts/test-tts.mjs http://127.0.0.1:5173
+npm test
+npm run build
+npm run test:browser
+# Deploy with both server variables set in Vercel Production:
+npx vercel --prod
+```
+
+The live test generates “Hi, I'm Shaaz. Welcome to my portfolio.” and saves artifacts/fish-audio-test.mp3. Listen to it, then test Listen to response in the website. Automated provider tests use fake credentials and mocked audio; they do not establish live Fish generation or clone quality. The environment file has not been changed.
+
+Run the six exact gallery questions, thumbnail interactions, desktop/mobile preview and missing-image checks with `npm run test:browser -- --showcase`. To also test actual MP3 decoding and playback with a locally saved audio file, run `MP3_FIXTURE=artifacts/fish-audio-test.mp3 npm run test:browser -- --showcase`. This uses a mocked endpoint and does not contact Fish Audio again. Set `APP_URL` if Vite uses a different port.

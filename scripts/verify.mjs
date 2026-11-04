@@ -41,6 +41,13 @@ const check = async (name, fn) => {
     console.error(`FAIL ${name}: ${error.message}`);
   }
 };
+if (process.argv.includes("--showcase")) {
+  try {
+    const { verifyShowcase } = await import("./verify-showcase.mjs");
+    await verifyShowcase({ browser, appUrl, artifacts });
+  } finally { await browser.close(); }
+  process.exit(0);
+}
 try {
   await page.goto(appUrl, {
     waitUntil: "networkidle",
@@ -193,7 +200,12 @@ try {
       assert.equal(await input.inputValue(), "hello q\n");
     });
     await check("Virtual backspace preserves pasted Unicode text", async () => {
+      // Let the preceding virtual key finish restoring its caret before replacing the draft.
+      await input.evaluate(() => new Promise(resolve =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ));
       await input.fill("Hello 👩🏽‍💻");
+      assert.equal(await input.inputValue(), "Hello 👩🏽‍💻");
       await input.evaluate((element) =>
         element.setSelectionRange(element.value.length, element.value.length),
       );
@@ -450,7 +462,7 @@ try {
           );
           assert.match(
             await modelPage.locator(".avatar-disclosure").innerText(),
-            /ILLUSTRATIVE AVATAR/,
+            /^PORTRAIT STUDY$/,
           );
           await modelPage.locator("#question-input").fill("Hello");
           assert.equal(

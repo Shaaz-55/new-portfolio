@@ -47,7 +47,7 @@ export function useSpeechSynthesis(service) {
                   "Voice playback did not start. The answer is available as text.",
                 ),
               ),
-            15000,
+            60000,
           );
       } catch (error) {
         finish(error);

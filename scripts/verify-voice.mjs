@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 
-// Deterministic native-API doubles exercise the real UI without microphone access,
-// external recognition services, audio hardware, or a paid provider.
+// Recognition and HTML Audio doubles exercise the UI without live credentials.
 function installVoiceDoubles({ prefixed = false, unsupported = false } = {}) {
   window.voiceTest = { starts: 0, stops: 0, aborts: 0, plays: [], cancels: 0 };
   const test = window.voiceTest;
@@ -28,33 +27,25 @@ function installVoiceDoubles({ prefixed = false, unsupported = false } = {}) {
     configurable: true,
     value: !unsupported && prefixed ? Recognition : undefined,
   });
-  Object.defineProperty(window, "SpeechSynthesisUtterance", {
-    configurable: true,
-    value: class {
-      constructor(text) {
-        this.text = text;
-      }
-    },
-  });
   Object.defineProperty(window, "speechSynthesis", {
     configurable: true,
-    value: unsupported
-      ? undefined
-      : {
-          cancel() {
-            test.cancels++;
-          },
-          getVoices() {
-            return [
-              { name: "Test English", lang: "en-IN", localService: true },
-            ];
-          },
-          speak(utterance) {
-            test.utterance = utterance;
-            test.plays.push(utterance.text);
-            queueMicrotask(() => utterance.onstart?.());
-          },
-        },
+    value: { speak() { throw new Error("Browser-native TTS must never run"); } },
+  });
+  const originalFetch = window.fetch.bind(window);
+  window.fetch = (url, options) => {
+    if (url !== "/api/tts") return originalFetch(url, options);
+    test.plays.push(JSON.parse(options.body).text);
+    return Promise.resolve(new Response(new Uint8Array([73, 68, 51, 0]), { headers: { "Content-Type": "audio/mpeg" } }));
+  };
+  Object.defineProperty(window, "Audio", {
+    configurable: true,
+    value: unsupported ? undefined : class {
+      constructor() { test.utterance = this; }
+      play() { queueMicrotask(() => this.onplaying?.()); return Promise.resolve(); }
+      pause() { test.cancels++; }
+      removeAttribute() {}
+      load() {}
+    },
   });
   test.results = (segments) =>
     test.recognition.onresult?.({
@@ -268,7 +259,7 @@ export async function verifyVoice({
         await page.locator('[data-avatar-state="speaking"]').waitFor();
         assert.equal((await page.evaluate(() => voiceTest.plays)).length, 1);
         await page.evaluate(() => {
-          voiceTest.staleSpeechEnd = voiceTest.utterance.onend;
+          voiceTest.staleSpeechEnd = voiceTest.utterance.onended;
         });
         await page
           .getByRole("button", { name: "Stop speaking", exact: true })
@@ -285,7 +276,7 @@ export async function verifyVoice({
             .getAttribute("data-avatar-state"),
           "speaking",
         );
-        await page.evaluate(() => voiceTest.utterance.onend());
+        await page.evaluate(() => voiceTest.utterance.onended());
         await page.locator('[data-avatar-state="idle"]').waitFor();
         assert.ok(
           !(await page
@@ -307,7 +298,7 @@ export async function verifyVoice({
           "listening",
         );
         assert.equal(
-          await page.evaluate(() => voiceTest.utterance.onend),
+          await page.evaluate(() => voiceTest.utterance.onended),
           null,
         );
         await page.getByRole("button", { name: "Cancel", exact: true }).click();
@@ -382,7 +373,7 @@ export async function verifyVoice({
         });
         await page.locator('[data-avatar-state="idle"]').waitFor();
         assert.equal(
-          await page.evaluate(() => voiceTest.utterance.onend),
+          await page.evaluate(() => voiceTest.utterance.onended),
           null,
         );
       } finally {

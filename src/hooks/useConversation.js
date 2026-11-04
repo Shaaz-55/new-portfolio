@@ -54,6 +54,7 @@ export function useConversation({ reducedMotion, service, onReset }) {
             sequence: id,
             topic: answer.topic,
             links: reducedMotion ? answer.links : [],
+            projects: reducedMotion ? answer.projects : [],
             complete: reducedMotion,
           },
         ]);
@@ -75,6 +76,8 @@ export function useConversation({ reducedMotion, service, onReset }) {
                       content: answer.content.slice(0, visible),
                       links:
                         visible === answer.content.length ? answer.links : [],
+                      projects:
+                        visible === answer.content.length ? answer.projects : [],
                       complete: visible === answer.content.length,
                     }
                   : message,

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { suggestedQuestions } from "../../data/portfolioData.js";
 import Icon from "../Icon.jsx";
+import ProjectShowcase from "../ProjectShowcase.jsx";
 
 export default function ConversationPanel({
   conversation,
@@ -88,6 +89,9 @@ export default function ConversationPanel({
                       <span className="blinking-cursor">▌</span>
                     )}
                 </p>
+                {message.complete && message.projects?.map((project) => (
+                  <ProjectShowcase key={project.id} project={project} />
+                ))}
                 {message.complete && message.links?.length > 0 && (
                   <div className="response-links">
                     {message.links.map((link) => (
