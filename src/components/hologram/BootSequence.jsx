@@ -40,7 +40,7 @@ export default function BootSequence({ onComplete, reducedMotion }) {
         {steps[step]}
         <span className="blinking-cursor">_</span>
       </span>
-      <button onClick={onComplete} className="skip-intro">
+      <button onClick={onComplete} className="boot-skip">
         SKIP INTRO ↗
       </button>
     </div>

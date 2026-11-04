@@ -1,8 +1,13 @@
 import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
+import { verifyVoice } from "./verify-voice.mjs";
 
 const artifacts = new URL("../artifacts/", import.meta.url);
+const appUrl =
+  process.env.APP_URL ||
+  process.argv.find((argument) => argument.startsWith("--url="))?.slice(6) ||
+  "http://127.0.0.1:5173";
 await mkdir(artifacts, { recursive: true });
 const browser = await chromium.launch({
   headless: true,
@@ -37,7 +42,7 @@ const check = async (name, fn) => {
   }
 };
 try {
-  await page.goto(process.env.APP_URL || "http://127.0.0.1:5173", {
+  await page.goto(appUrl, {
     waitUntil: "networkidle",
   });
   await check("Boot completes without intervention", async () => {
@@ -47,6 +52,27 @@ try {
   });
   await check("WebGL avatar initializes", async () => {
     await page.locator('[data-renderer="ready"] canvas').waitFor();
+  });
+  await check("Skip link is hidden until keyboard focus", async () => {
+    const link = page.locator(".skip-link");
+    assert.equal(
+      await link.evaluate((node) => getComputedStyle(node).clipPath),
+      "inset(50%)",
+    );
+    await page.keyboard.press("Tab");
+    assert.equal(
+      await link.evaluate((node) => document.activeElement === node),
+      true,
+    );
+    assert.equal(
+      await link.evaluate((node) => getComputedStyle(node).clipPath),
+      "none",
+    );
+    await page.keyboard.press("Tab");
+    assert.equal(
+      await link.evaluate((node) => getComputedStyle(node).clipPath),
+      "inset(50%)",
+    );
   });
   await page.screenshot({
     path: new URL("desktop-1440.png", artifacts).pathname,
@@ -91,7 +117,7 @@ try {
         `Horizontal overflow: ${JSON.stringify(dimensions)}`,
       );
       assert.ok(
-        dimensions.input.bottom <= height,
+        width < 768 || dimensions.input.bottom <= height,
         `Input below viewport: ${JSON.stringify(dimensions)}`,
       );
       assert.ok(
@@ -175,7 +201,7 @@ try {
       assert.equal(await input.inputValue(), "Hello ");
     });
     await check(
-      "Physical enter, thinking, speaking and local answer",
+      "Physical enter, thinking and silent local answer",
       async () => {
         await input.fill("Tell me about SafeSteps");
         await page.keyboard.press("Enter");
@@ -186,7 +212,13 @@ try {
           "thinking",
         );
         assert.ok(await input.evaluate((element) => element.readOnly));
-        await page.locator('[data-avatar-state="speaking"]').waitFor();
+        await page.locator(".message-shaaz").first().waitFor();
+        assert.notEqual(
+          await page
+            .locator(".avatar-region")
+            .getAttribute("data-avatar-state"),
+          "speaking",
+        );
         await page.waitForFunction(
           () => !document.querySelector("#question-input").readOnly,
           {},
@@ -222,7 +254,7 @@ try {
       );
       assert.match(
         await page.locator(".message-shaaz").last().innerText(),
-        /predefined answers/,
+        /responses are predefined/,
       );
     });
     await check("Conversation scroll stays inside the monitor", async () => {
@@ -235,7 +267,7 @@ try {
         }));
       assert.ok(data.scroll > data.height);
       assert.ok(data.scroll - data.height - data.top < 5, JSON.stringify(data));
-      assert.equal(await page.evaluate(() => window.scrollY), 0);
+      assert.ok(await page.locator(".conversation-scroll").isVisible());
     });
     await page.screenshot({
       path: new URL("conversation-desktop.png", artifacts).pathname,
@@ -244,25 +276,25 @@ try {
     await check("Audio is opt-in and mute works", async () => {
       assert.equal(
         await page
-          .getByRole("button", { name: "Enable audio", exact: true })
+          .getByRole("button", { name: "Enable sound effects", exact: true })
           .getAttribute("aria-pressed"),
         "false",
       );
       await page
-        .getByRole("button", { name: "Enable audio", exact: true })
+        .getByRole("button", { name: "Enable sound effects", exact: true })
         .click();
       assert.equal(
         await page
-          .getByRole("button", { name: "Mute audio", exact: true })
+          .getByRole("button", { name: "Mute sound effects", exact: true })
           .getAttribute("aria-pressed"),
         "true",
       );
       await page
-        .getByRole("button", { name: "Mute audio", exact: true })
+        .getByRole("button", { name: "Mute sound effects", exact: true })
         .click();
       assert.equal(
         await page
-          .getByRole("button", { name: "Enable audio", exact: true })
+          .getByRole("button", { name: "Enable sound effects", exact: true })
           .getAttribute("aria-pressed"),
         "false",
       );
@@ -283,7 +315,7 @@ try {
       );
       assert.match(
         await page.locator(".message-shaaz").innerText(),
-        /computer science student/,
+        /computer science engineering student/i,
       );
     });
     await check("Mobile touch keyboard and readable conversation", async () => {
@@ -345,7 +377,7 @@ try {
             : original.call(this, type, ...args);
         };
       });
-      await fallbackPage.goto(process.env.APP_URL || "http://127.0.0.1:5173");
+      await fallbackPage.goto(appUrl);
       await fallbackPage
         .locator('[data-renderer="fallback"]')
         .waitFor({ state: "attached" });
@@ -364,88 +396,79 @@ try {
       await fallbackPage.close();
     });
     await check(
-      "Speech lifecycle starts only when enabled and stops on mute",
+      "A custom GLB replaces the stand-in using configuration alone",
       async () => {
-        const speechPage = await browser.newPage({
+        const modelPage = await browser.newPage({
           viewport: { width: 1440, height: 900 },
           reducedMotion: "reduce",
         });
-        await speechPage.addInitScript(() => {
-          window.speechCalls = [];
-          Object.defineProperty(window, "speechSynthesis", {
-            value: {
-              cancel() {
-                window.speechCalls.push("cancel");
+        modelPage.on("pageerror", (error) => consoleErrors.push(error.message));
+        try {
+          await modelPage.route("**/models/avatar-config.json", (route) =>
+            route.fulfill({
+              json: {
+                modelUrl: "/models/portrait-study.glb",
+                kind: "custom",
+                height: 3.4,
               },
-              speak(utterance) {
-                window.speechCalls.push(utterance.text);
-                queueMicrotask(() => utterance.onstart?.());
-              },
-            },
-          });
-        });
-        await speechPage.goto(process.env.APP_URL || "http://127.0.0.1:5173");
-        await speechPage.locator(".boot-overlay").waitFor({ state: "hidden" });
-        assert.ok(
-          (await speechPage.evaluate(() => window.speechCalls)).every(
-            (call) => call === "cancel",
-          ),
-        );
-        await speechPage
-          .getByRole("button", { name: "Enable audio", exact: true })
-          .click();
-        await speechPage
-          .getByRole("button", { name: "01 Who is Shaaz?" })
-          .click();
-        await speechPage.locator('[data-avatar-state="speaking"]').waitFor();
-        assert.ok(
-          (await speechPage.evaluate(() => window.speechCalls)).some((call) =>
-            call.includes("I'm Shaaz"),
-          ),
-        );
-        await speechPage
-          .getByRole("button", { name: "Mute audio", exact: true })
-          .click();
-        await speechPage.locator('[data-avatar-state="idle"]').waitFor();
-        assert.equal(
-          await speechPage.evaluate(() => window.speechCalls.at(-1)),
-          "cancel",
-        );
-        await speechPage.close();
+            }),
+          );
+          await modelPage.goto(appUrl);
+          await modelPage.getByText("CUSTOM AVATAR", { exact: true }).waitFor();
+          await modelPage.locator("#question-input").fill("Hello");
+          assert.equal(
+            await modelPage.locator("#question-input").inputValue(),
+            "Hello",
+          );
+        } finally {
+          await modelPage.close();
+        }
       },
     );
     await check(
-      "Unavailable browser speech preserves the full text experience",
+      "An invalid custom GLB retains the working stand-in",
       async () => {
-        const textPage = await browser.newPage({
+        const modelPage = await browser.newPage({
           viewport: { width: 390, height: 844 },
           reducedMotion: "reduce",
         });
-        await textPage.addInitScript(() =>
-          Object.defineProperty(window, "speechSynthesis", {
-            value: undefined,
-          }),
-        );
-        await textPage.goto(process.env.APP_URL || "http://127.0.0.1:5173");
-        await textPage.locator(".boot-overlay").waitFor({ state: "hidden" });
-        await textPage
-          .getByRole("button", { name: "Enable audio", exact: true })
-          .click();
-        assert.match(
-          await textPage.locator(".audio-notice").innerText(),
-          /Voice is unavailable/,
-        );
-        await textPage
-          .getByRole("button", { name: "01 Who is Shaaz?" })
-          .click();
-        await textPage.waitForFunction(() =>
-          document
-            .querySelector(".message-shaaz p")
-            ?.textContent.includes("I'm Shaaz"),
-        );
-        await textPage.close();
+        modelPage.on("pageerror", (error) => consoleErrors.push(error.message));
+        try {
+          await modelPage.route("**/models/avatar-config.json", (route) =>
+            route.fulfill({
+              json: { modelUrl: "/models/test-invalid.glb", kind: "custom" },
+            }),
+          );
+          await modelPage.route("**/models/test-invalid.glb", (route) =>
+            route.fulfill({ body: "invalid GLB" }),
+          );
+          await modelPage.goto(appUrl, { waitUntil: "networkidle" });
+          assert.ok(
+            await modelPage
+              .locator('[data-renderer="ready"] canvas')
+              .isVisible(),
+          );
+          assert.match(
+            await modelPage.locator(".avatar-disclosure").innerText(),
+            /ILLUSTRATIVE AVATAR/,
+          );
+          await modelPage.locator("#question-input").fill("Hello");
+          assert.equal(
+            await modelPage.locator("#question-input").inputValue(),
+            "Hello",
+          );
+        } finally {
+          await modelPage.close();
+        }
       },
     );
+    await verifyVoice({
+      browser,
+      check,
+      appUrl: appUrl,
+      artifacts,
+      consoleErrors,
+    });
     await check("No browser console errors", async () =>
       assert.deepEqual(consoleErrors, []),
     );

@@ -1,6 +1,6 @@
 # PROJECT SHAaz
 
-A frontend-only, interactive portfolio for Shaaz Hemani. A physical-looking CRT and mechanical keyboard sit inside an original layered control room inspired by the supplied image's atmosphere. Visitors explore the portfolio through local, predefined conversations.
+An interactive portfolio for Shaaz Hemani inside the original green intelligence facility. Physical CRT and side monitors, tall server cabinets, and a mechanical keyboard surround the existing stylised 3D character and personal knowledge base. The enlarged central display gives more space to readable conversation text. Responses remain local and predefined.
 
 ## Run
 
@@ -9,67 +9,78 @@ Requires Node.js 20.19+ or 22.12+.
 ```sh
 npm install
 npm run dev
+npm run build
 ```
 
-Open http://127.0.0.1:5173. Use `npm run build` for the production build and `npm run preview` to preview it.
+Open the local URL printed by Vite. `npm run preview` serves the production build.
 
-## Implemented
+## Voice interaction
 
-- Responsive CSS facility with server cabinets, side monitors, physical CRT construction and scanlines.
-- A locally rendered Three.js bust with idle, listening, thinking and speaking states, blinking and subtle head movement. A lightweight procedural head remains available while the bundled portrait geometry loads; an SVG portrait handles unavailable WebGL.
-- A short, skippable boot sequence, remembered for the current browser session.
-- Native text input, paste, selection replacement, physical key animations, clickable QWERTY keys, numbers, symbols, Shift, Space, Backspace and Enter. Shift+Enter adds a newline. The keyboard collapses on mobile.
-- Fifteen predefined topic responses, project shortcuts, honest unknown-question fallbacks, typewriter responses, internal conversation scrolling, polite screen-reader announcements and a clear-session control.
-- Opt-in generated key sounds and browser-native speech output. Audio starts muted, can be stopped immediately, and is cancelled when the tab is hidden or the app is unmounted.
-- Bundled fonts, reduced-motion support, visible focus states and no external conversation calls.
+- Microphone access starts only when the visitor clicks the microphone. Both `SpeechRecognition` and `webkitSpeechRecognition` are supported.
+- Partial and final recognition results appear in a live preview. Stop finishes recognition; Cancel discards the recording and preserves the original typed draft.
+- Final text is inserted at the saved selection in the existing input. It is never automatically submitted. Visitors can edit it, discard it, or send it with Enter or the Send button. The 500-character limit is preserved.
+- While recording, input editing and submission are temporarily locked to prevent transcript conflicts. They return immediately after cancellation or errors.
+- Permission denial, missing microphones, no speech, unsupported languages, and recognition network errors have readable text fallbacks.
+- Recordings stop when the tab is hidden, on page exit, on unmount, or after 60 seconds. A timeout releases native implementations that fail to report completion.
+- Answers never autoplay, including when sound effects are enabled. Each completed answer has a **Listen to response** control and a visible stop control during playback. New playback cancels the previous playback; recording and playback cannot run together.
+- The avatar speaks only during actual synthesis playback events. Silent text streaming never moves its mouth. End, stop, error, and page hiding stop speech animation and the waveform.
 
-## Main files
+Browser recognition often uses the browser vendor's online speech service; availability depends on the browser, OS, permissions, and connection. Use HTTPS in deployment or localhost in development. The recording waveform is an animated activity indicator, not a measured audio level. Browser TTS voice quality and gender vary by OS; the adapter prefers an available English (India) voice at normal rate and pitch. Mouth movement is approximate, not phoneme-level lip sync.
 
-| Location                                  | Purpose                                                               |
-| ----------------------------------------- | --------------------------------------------------------------------- |
-| `src/App.jsx`                             | Experience composition and shared interaction state                   |
-| `src/components/`                         | Facility, monitor, avatar, conversation, input, keyboard and HUD      |
-| `src/hooks/`                              | Conversation lifecycle, keyboard editing, audio and motion preference |
-| `src/data/portfolioData.js`               | Verified identity and project information                             |
-| `src/data/mockResponses.js`               | Editable responses and topic matching                                 |
-| `src/services/mockConversationService.js` | Cancellable async service boundary for a future integration           |
-| `src/styles/`                             | Scene, hardware, typography and responsive layout                     |
-| `scripts/verify.mjs`                      | Browser interaction and layout verification                           |
-| `tests/conversation.test.js`              | Required topic coverage, cancellation and input validation            |
+No Wispr, ElevenLabs, paid API, API credentials, or speech backend is integrated.
 
-## Replace the avatar
+## Independent replacement boundaries
 
-1. Place a front-facing, preferably waist-up or bust GLB at **`public/models/shaaz-avatar.glb`**.
-2. Change `modelUrl` in **`public/models/avatar-config.json`** to `"/models/shaaz-avatar.glb"`.
-3. The model is centred and scaled to the portrait stage. Adjust the camera and framing in `src/components/avatar/DigitalAvatar.jsx` for a model with different proportions.
+| Component        | Replacement point                                                          | Contract                                                                                                                                                             |
+| ---------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Avatar asset     | `public/models/avatar-config.json`, `src/components/avatar/avatarModel.js` | Loader returns `{ root, kind, clips, config, dispose }`; the temporary model also exposes its animation rig.                                                         |
+| Avatar animation | `src/components/avatar/avatarAnimation.js`                                 | Factory accepts a loaded model and returns `{ update(time, state, reducedMotion), dispose }`. States: `idle`, `listening`, `thinking`, `speaking`.                   |
+| Recognition      | `src/services/browserRecognition.js`                                       | `{ supported, start({ onStart, onResult, onEnd, onError, lang }) }`; start returns `{ stop, cancel }`. Results are `{ final, interim }`; end supplies `{ text }`.    |
+| Speech output    | `src/services/browserSynthesis.js`                                         | `{ supported, speak(text, { onStart, onEnd, onError }) }`; speak returns `{ stop }`. Call `onStart` when audio actually starts, and `onEnd`/`onError` when it stops. |
+| Conversation     | `src/services/mockConversationService.js`                                  | `reply(question, { signal, context })` resolves `{ content, topic, links, context }`. Honour cancellation and keep history scoped to the conversation.               |
 
-Morph targets named `jawOpen` or `mouthOpen` are supported for basic speaking. Custom models without those targets retain subtle head movement. The working placeholder is retained if a configured model fails to load.
+The defaults are wired in `src/services/interactionServices.js`. `App` also accepts a `services` prop for provider injection. Voice hooks own UI state and lifecycle cleanup; providers own native resources and must suppress callbacks after cancellation. `DigitalAvatar` independently accepts `modelLoader`, `animationFactory`, and `configUrl` props. No speech service imports the avatar or conversation components.
 
-The bundled character is an illustrative stand-in, **not Shaaz's actual likeness**. The adapted head geometry is © I-R Entertainment Ltd., by Lee Perry-Smith / Infinite-Realities, under CC BY 3.0. Full attribution and modification details are in [public/models/ATTRIBUTION.md](public/models/ATTRIBUTION.md). Clothing, hair, materials, scene and procedural animation are created for this project. No movie assets, characters or audio are used.
+A future ElevenLabs adapter can call your backend and play the returned audio while implementing the same synthesis contract. Keep `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` on that backend. Do not place secrets in React code or `VITE_*` variables. No frontend changes to the avatar are needed.
 
-## Dependencies
+## Replace the temporary character
 
-Runtime: React, React DOM, Three.js, and locally bundled Space Grotesk / IBM Plex Mono fonts. Development: Vite, the React Vite plugin, Playwright and Prettier.
+1. Put your front-facing GLB in `public/models/shaaz-avatar.glb`.
+2. In `public/models/avatar-config.json`, set `modelUrl` to `/models/shaaz-avatar.glb` and `kind` to `custom`.
+3. Adjust `height`, `offsetY`, `rotationY` (degrees), `cameraPosition`, and `cameraTarget` in the same file as needed. Bust or waist-up models suit the stage best.
+4. Map any embedded clips using `animations.idle`, `listening`, `thinking`, and `speaking`. Map the mouth blendshape with `morphs.mouth`; `jawOpen` and `mouthOpen` work by default. Standard blink morphs and common head bones are supported. Missing clips retain gentle procedural movement.
 
-The 3D component is loaded as a separate chunk so the core conversation interface can render independently. Rendering is capped at approximately 30 FPS and 1.65 device pixel ratio, with reduced update frequency for reduced motion and no rendering while the tab is hidden.
+The default `portrait-geometry` mode assembles the bundled portrait-study GLB with the existing original hair and clothing. Invalid or missing custom assets keep a working procedural stand-in. Unavailable WebGL displays a static portrait while all conversation and input controls continue working.
+
+The placeholder is **not Shaaz's likeness**. Its adapted head geometry is © I-R Entertainment Ltd., by Lee Perry-Smith / Infinite-Realities, under CC BY 3.0. See [source credits](public/models/ATTRIBUTION.md). No personal model or voice clone is required.
+
+## Preserved functionality
+
+Personal and project data in `src/data/` is preserved. Physical and virtual keyboard insertion, selections, Unicode backspace, Shift, symbols, Space, Enter, press animations, and Shift+Enter remain supported. Contact responses expose the supplied links. The virtual keyboard collapses on mobile and when a native keyboard reduces the visual viewport. Small screens use a scrollable stacked layout instead of shrinking conversation text.
+
+The recovered facility environment uses lightweight CSS, with Three.js reserved for the character. The portrait occupies 28% of the CRT content grid and its canvas is scaled uniformly to 82%; the conversation receives 70%, with a 2% gap. The avatar is loaded separately, capped near 30 FPS and 1.65 pixel ratio, paused in background tabs, and respects reduced motion. Fonts are bundled. There are no new runtime dependencies.
 
 ## Verification
 
 ```sh
 npm test
 npm run build
-# In a second terminal while npm run dev is running:
+# While the dev server is running:
 npm run test:browser
+# If Vite selected a different port:
+APP_URL=http://127.0.0.1:5174 npm run test:browser
 ```
 
-The browser script uses installed Google Chrome on macOS. On other systems, install Playwright Chromium with `npx playwright install chromium`, or set `CHROME_PATH` to a compatible browser executable. Set `APP_URL` if the Vite port differs.
+The browser suite uses installed Google Chrome on macOS; elsewhere install Playwright Chromium or set `CHROME_PATH`. Screenshots and reports are written to ignored `artifacts/`.
 
-Browser verification covers 1440×900, 1920×1080, 1366×768, 1280×720, 1024×768, 768×1024, 390×844 and 320×740; keyboard editing and animation; duplicate submissions; avatar states; local responses; scrolling; audio toggles; reset; reduced motion; and WebGL fallback. Screenshots and machine-readable reports are saved in ignored `artifacts/`.
+Checks cover eight viewport sizes, keyboard regression behavior, local responses and contact links, internal scrolling, reset, reduced motion, WebGL fallback, and the complete voice lifecycle. Native speech APIs are mocked for deterministic browser tests: they never request a real microphone or call a recognition service. Actual microphone permission prompts, recognition accuracy, and audible voice quality require a manual check on the target competition device.
 
-## Current limitations
+## Green design recovery
 
-- Answers are intentionally predefined. This is not an AI backend; conversation history is in memory and resets on refresh.
-- Verified contact details, institution, detailed technology stacks, achievements and personal experience stories were not supplied. The demo explicitly says when information is missing.
-- Browser voice availability and quality vary by device. Speech follows the displayed answer but does not provide phoneme-level lip sync. Microphone input is not included.
-- The current avatar is a stylised placeholder. A bespoke rigged avatar is needed for a precise likeness and detailed facial acting.
-- The environment uses layered CSS rather than a freely navigable 3D room. Tablet and mobile layouts simplify the surrounding hardware.
+See [the recovery audit](docs/design-recovery.md) for the original source commit, backup location, preserved functionality, and the missing showcase assets identified during inspection.
+
+The existing `scripts/verify.mjs` and `scripts/verify-voice.mjs` were retained without changes during this recovery. Additional layout and archive checks can be run against the same development server:
+
+```sh
+node scripts/verify-recovery.mjs --url=http://127.0.0.1:5174
+```

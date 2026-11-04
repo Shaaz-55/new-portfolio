@@ -1,6 +1,12 @@
 import Icon from "../Icon.jsx";
 
-export default function SystemHUD({ audio, onReset, hasMessages, busy }) {
+export default function SystemHUD({
+  audio,
+  speech,
+  onReset,
+  hasMessages,
+  busy,
+}) {
   return (
     <header className="system-hud">
       <a
@@ -22,12 +28,16 @@ export default function SystemHUD({ audio, onReset, hasMessages, busy }) {
         <span className="online-status">
           <i className="led" /> SYSTEM ONLINE
         </span>
-        <span className="local-status">
-          LOCAL DEMO{" "}
-          <span className="connection-bars" aria-hidden="true">
-            ▂▄▆
-          </span>
-        </span>
+        {speech.activeId && (
+          <button
+            className="audio-button is-on"
+            onClick={speech.stop}
+            aria-label="Stop all speech"
+          >
+            <Icon name="stop" size={14} />
+            <span>STOP VOICE</span>
+          </button>
+        )}
         {hasMessages && (
           <button
             className="icon-button reset-button"
@@ -41,11 +51,13 @@ export default function SystemHUD({ audio, onReset, hasMessages, busy }) {
         <button
           className={`audio-button ${audio.enabled ? "is-on" : ""}`}
           onClick={audio.toggle}
-          aria-label={audio.enabled ? "Mute audio" : "Enable audio"}
+          aria-label={
+            audio.enabled ? "Mute sound effects" : "Enable sound effects"
+          }
           aria-pressed={audio.enabled}
         >
           <Icon name={audio.enabled ? "volume" : "muted"} size={16} />
-          <span>AUDIO {audio.enabled ? "ON" : "OFF"}</span>
+          <span>SOUND FX {audio.enabled ? "ON" : "OFF"}</span>
         </button>
       </div>
     </header>

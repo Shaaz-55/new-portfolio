@@ -1,4 +1,17 @@
 {
-  "modelUrl": null,
-  "note": "Place shaaz-avatar.glb in this directory, then set modelUrl to /models/shaaz-avatar.glb. The built-in avatar is an original illustrative stand-in, not a likeness of Shaaz."
+  "modelUrl": "/models/portrait-study.glb",
+  "kind": "portrait-geometry",
+  "height": 3.4,
+  "offsetY": 0,
+  "rotationY": 0,
+  "cameraPosition": [0, 1.95, 7.1],
+  "cameraTarget": [0, 1.85, 0],
+  "animations": {
+    "idle": "Idle",
+    "listening": "Listening",
+    "thinking": "Thinking",
+    "speaking": "Speaking"
+  },
+  "morphs": { "mouth": "jawOpen" },
+  "note": "Temporary illustrative male character. To replace it, set modelUrl to your GLB and kind to custom. Framing, clip names and mouth morph are configurable here."
 }

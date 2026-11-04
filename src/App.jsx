@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import FacilityEnvironment from "./components/facility/FacilityEnvironment.jsx";
 import SidePanels from "./components/facility/SidePanels.jsx";
 import SystemHUD from "./components/hud/SystemHUD.jsx";
@@ -9,6 +9,11 @@ import { useReducedMotion } from "./hooks/usePreferences.js";
 import { useAudio } from "./hooks/useAudio.js";
 import { useConversation } from "./hooks/useConversation.js";
 import { useKeyboardInput } from "./hooks/useKeyboardInput.js";
+import { useSpeechRecognition } from "./hooks/useSpeechRecognition.js";
+import { useSpeechSynthesis } from "./hooks/useSpeechSynthesis.js";
+import { interactionServices } from "./services/interactionServices.js";
+import { insertTranscript } from "./services/transcriptDraft.js";
+import { MAX_INPUT_LENGTH } from "./services/conversationContract.js";
 
 function needsBoot() {
   try {
@@ -18,31 +23,65 @@ function needsBoot() {
   }
 }
 
-export default function App() {
+export default function App({ services = interactionServices }) {
   const reducedMotion = useReducedMotion();
   const audio = useAudio();
+  const speech = useSpeechSynthesis(services.synthesis);
   const [booting, setBooting] = useState(needsBoot);
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const inputRef = useRef(null);
+  const draftBeforeVoice = useRef(null);
   const conversation = useConversation({
     reducedMotion,
-    onAnswer: audio.speak,
-    onReset: audio.stop,
+    service: services.conversation,
+    onReset: speech.stop,
   });
+  const recognition = useSpeechRecognition({
+    service: services.recognition,
+    onFinal(text) {
+      const draft = insertTranscript(
+        draftBeforeVoice.current,
+        text,
+        MAX_INPUT_LENGTH,
+      );
+      setValue(draft.value);
+      requestAnimationFrame(() => {
+        inputRef.current?.focus({ preventScroll: true });
+        inputRef.current?.setSelectionRange(draft.caret, draft.caret);
+      });
+      return draft.truncated
+        ? "Voice text was shortened to fit 500 characters. Review your draft before sending."
+        : "";
+    },
+  });
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const resize = () => {
+      if (
+        window.innerWidth < 768 &&
+        viewport &&
+        window.innerHeight - viewport.height > 150
+      )
+        setExpanded(false);
+    };
+    viewport?.addEventListener("resize", resize);
+    return () => viewport?.removeEventListener("resize", resize);
+  }, []);
   const completeBoot = useCallback(() => {
     setBooting(false);
     try {
       sessionStorage.setItem("shaaz-booted", "1");
     } catch {
-      /* Storage is optional. */
+      /* Optional storage. */
     }
   }, []);
   const ask = (question) => {
-    if (conversation.isBusy || !question.trim()) return;
+    if (conversation.isBusy || recognition.active || !question.trim()) return;
     completeBoot();
-    audio.stop();
+    recognition.cancel();
+    speech.stop();
     audio.tone("submit");
     setValue("");
     conversation.submit(question);
@@ -53,17 +92,27 @@ export default function App() {
     value,
     setValue,
     submit,
-    disabled: conversation.isBusy,
+    disabled: conversation.isBusy || recognition.active,
     tone: audio.tone,
   });
-  const avatarState =
-    conversation.phase === "thinking"
+  const record = () => {
+    if (conversation.isBusy) return;
+    completeBoot();
+    speech.stop();
+    draftBeforeVoice.current = {
+      value,
+      start: inputRef.current?.selectionStart ?? value.length,
+      end: inputRef.current?.selectionEnd ?? value.length,
+    };
+    recognition.start();
+  };
+  const avatarState = speech.speaking
+    ? "speaking"
+    : conversation.phase === "thinking" || recognition.status === "processing"
       ? "thinking"
-      : conversation.phase === "speaking" || audio.speaking
-        ? "speaking"
-        : focused
-          ? "listening"
-          : "idle";
+      : recognition.active || (focused && !conversation.isBusy)
+        ? "listening"
+        : "idle";
   return (
     <div className={`experience ${reducedMotion ? "reduced-motion" : ""}`}>
       <a href="#question-input" className="skip-link">
@@ -72,7 +121,9 @@ export default function App() {
       <FacilityEnvironment />
       <SystemHUD
         audio={audio}
+        speech={speech}
         onReset={() => {
+          recognition.cancel();
           conversation.reset();
           setValue("");
         }}
@@ -80,23 +131,11 @@ export default function App() {
         busy={conversation.isBusy}
       />
       <main className="control-room" id="terminal">
-        <div className="scene-heading">
-          <div>
-            <span className="section-cross">+</span>
-            <span>
-              AN INTERACTIVE PORTFOLIO
-              <br />
-              <b>ENTER THE MIND OF A BUILDER.</b>
-            </span>
-          </div>
-          <span className="scene-heading-right">
-            EST. CURIOSITY
-            <br />
-            <b>OPEN TO POSSIBILITIES</b>
-          </span>
-        </div>
         <div className="station">
-          <SidePanels onQuestion={ask} disabled={conversation.isBusy} />
+          <SidePanels
+            onQuestion={ask}
+            disabled={conversation.isBusy || recognition.active}
+          />
           <CRTMonitor
             state={avatarState}
             conversation={conversation}
@@ -104,6 +143,13 @@ export default function App() {
             reducedMotion={reducedMotion}
             booting={booting}
             onBootComplete={completeBoot}
+            speech={speech}
+            onPlay={(message) => {
+              recognition.cancel();
+              speech.play(message);
+            }}
+            inputActive={recognition.active}
+            recording={recognition.status === "listening"}
           />
           <div className="input-deck">
             <InputConsole
@@ -116,28 +162,26 @@ export default function App() {
               phase={conversation.phase}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
+              recognition={recognition}
+              onRecord={record}
+              onDiscard={() => {
+                setValue(draftBeforeVoice.current?.value || "");
+                recognition.cancel();
+                inputRef.current?.focus();
+              }}
             />
             <VirtualKeyboard
               keyboard={keyboard}
-              disabled={conversation.isBusy}
+              disabled={conversation.isBusy || recognition.active}
               expanded={expanded}
               onToggle={() => setExpanded((current) => !current)}
             />
           </div>
         </div>
-        <div className="room-footer">
-          <span>
-            <i className="led" /> ALL GOOD CONVERSATIONS START WITH CURIOSITY.
-          </span>
-          <span>
-            FRONTEND DEMO <i /> LOCAL RESPONSES <i /> NO DATA SENT
-          </span>
-          <span>SH / 001</span>
-        </div>
       </main>
-      {audio.notice && (
+      {(audio.notice || speech.notice) && (
         <div className="audio-notice" role="status">
-          {audio.notice}
+          {speech.notice || audio.notice}
         </div>
       )}
     </div>

@@ -1,5 +1,14 @@
 export default function Icon({ name, size = 18, ...props }) {
   const paths = {
+    mic: (
+      <>
+        <rect x="9" y="2" width="6" height="13" rx="3" />
+        <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8" />
+      </>
+    ),
+    stop: <rect x="6" y="6" width="12" height="12" rx="2" />,
+    play: <path d="m8 4 12 8-12 8z" />,
+    close: <path d="m6 6 12 12M6 18 18 6" />,
     volume: (
       <>
         <path d="m11 5-6 4H2v6h3l6 4z" />

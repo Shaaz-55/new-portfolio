@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { conversationService, emptyConversationContext } from "../services/mockConversationService.js";
+import { emptyConversationContext } from "../services/conversationContract.js";
 import { portfolioData } from "../data/portfolioData.js";
 
-export function useConversation({ reducedMotion, onAnswer, onReset }) {
+export function useConversation({ reducedMotion, service, onReset }) {
   const [messages, setMessages] = useState([]);
   const [phase, setPhase] = useState("idle");
   const [error, setError] = useState("");
@@ -12,8 +12,6 @@ export function useConversation({ reducedMotion, onAnswer, onReset }) {
   const timer = useRef(null);
   const serial = useRef(0);
   const contextRef = useRef(emptyConversationContext());
-  const onAnswerRef = useRef(onAnswer);
-  onAnswerRef.current = onAnswer;
 
   useEffect(
     () => () => {
@@ -39,14 +37,13 @@ export function useConversation({ reducedMotion, onAnswer, onReset }) {
       const controller = new AbortController();
       abortRef.current = controller;
       try {
-        const answer = await conversationService.reply(question, {
+        const answer = await service.reply(question, {
           signal: controller.signal,
           context: contextRef.current,
         });
         if (controller.signal.aborted) return false;
         contextRef.current = answer.context;
-        setPhase("speaking");
-        onAnswerRef.current?.(answer.content);
+        setPhase("responding");
         const answerId = `${id}-a`;
         setMessages((previous) => [
           ...previous,
@@ -73,7 +70,13 @@ export function useConversation({ reducedMotion, onAnswer, onReset }) {
             setMessages((previous) =>
               previous.map((message) =>
                 message.id === answerId
-                  ? { ...message, content: answer.content.slice(0, visible), links: visible === answer.content.length ? answer.links : [], complete: visible === answer.content.length }
+                  ? {
+                      ...message,
+                      content: answer.content.slice(0, visible),
+                      links:
+                        visible === answer.content.length ? answer.links : [],
+                      complete: visible === answer.content.length,
+                    }
                   : message,
               ),
             );
@@ -95,7 +98,7 @@ export function useConversation({ reducedMotion, onAnswer, onReset }) {
       }
       return true;
     },
-    [reducedMotion],
+    [reducedMotion, service],
   );
 
   const reset = useCallback(() => {

@@ -1,8 +1,8 @@
 import { portfolioData } from "../data/portfolioData.js";
 import { contactLinks, fallbackResponse, intentRules, mockResponses, projectOverview, wasteMetrics } from "../data/mockResponses.js";
 
-export const MAX_INPUT_LENGTH = 500;
-export const emptyConversationContext = () => ({ projectId: null, topic: null });
+import { MAX_INPUT_LENGTH, emptyConversationContext } from './conversationContract.js';
+export { MAX_INPUT_LENGTH, emptyConversationContext } from './conversationContract.js';
 
 export function normaliseQuestion(question) {
   return question.normalize("NFKC").toLowerCase()

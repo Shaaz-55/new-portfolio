@@ -8,7 +8,7 @@ import {
 test("All required sample topics resolve to intentional local answers", () => {
   const cases = [
     ["Who are you?", "identity"],
-    ["What are you studying?", "study"],
+    ["What are you studying?", "education"],
     ["Tell me about UniBuddy / PeerHub", "unibuddy"],
     ["Tell me about SafeSteps", "safesteps"],
     ["What is LogiSense?", "logisense"],
@@ -17,9 +17,9 @@ test("All required sample topics resolve to intentional local answers", () => {
     ["What kind of problems do you enjoy solving?", "motivation"],
     ["What are your career ambitions?", "ambitions"],
     ["Why should we select you?", "selection"],
-    ["What makes you different?", "selection"],
+    ["What makes you different?", "strengths"],
     ["What are you currently learning?", "learning"],
-    ["What is your biggest strength?", "selection"],
+    ["What is your biggest strength?", "strengths"],
     ["Tell me about a challenge you faced", "challenge"],
     ["What would you do with a ₹3,000 competition budget?", "budget"],
   ];
@@ -32,8 +32,17 @@ test("All required sample topics resolve to intentional local answers", () => {
 });
 test("Unknown questions and missing personal data are disclosed honestly", () => {
   assert.equal(findResponse("What is the weather tomorrow?").topic, "fallback");
-  assert.match(findResponse("Your internship experience?").content, /verified/);
-  assert.match(findResponse("How can I contact you?").content, /not published/);
+  assert.match(
+    findResponse("Your internship experience?").content,
+    /haven't supplied/,
+  );
+  const contact = findResponse("How can I contact you?");
+  assert.ok(
+    contact.links.some(
+      (link) => link.href === "mailto:shaaz23hemani@gmail.com",
+    ),
+  );
+  assert.equal(contact.links.length, 3);
   assert.equal(
     findResponse("this is a shipping question").topic,
     "fallback",

@@ -5,7 +5,9 @@ import Icon from "../Icon.jsx";
 export default function ConversationPanel({
   conversation,
   onQuestion,
-  reducedMotion,
+  speech,
+  onPlay,
+  inputActive,
 }) {
   const { messages, phase, error, announcement } = conversation;
   const scrollRef = useRef(null);
@@ -22,21 +24,12 @@ export default function ConversationPanel({
       className={`conversation-panel ${messages.length ? "has-conversation" : ""}`}
       aria-label="Conversation with Shaaz"
     >
-      <div className="terminal-eyebrow">
-        <span className="tiny-cross">+</span> PERSONAL INTERFACE ONLINE{" "}
-        <span className="terminal-version">V.01</span>
-      </div>
       {messages.length === 0 ? (
         <div className="welcome-screen">
-          <div className="welcome-greeting">
-            <span className="prompt-chevron">&gt;</span> Good evening, visitor.
-          </div>
           <h1>
-            Don't read
-            <br /> my portfolio.
+            Don't read my portfolio.
             <br />
             <em>Interrogate it.</em>
-            <span className="heading-cursor" />
           </h1>
           <p>
             I'm Shaaz. A curious mind. A relentless builder.
@@ -48,6 +41,7 @@ export default function ConversationPanel({
               <button
                 key={item.code}
                 className="suggestion"
+                disabled={inputActive}
                 onClick={() => onQuestion(item.question)}
               >
                 <span className="suggestion-code">{item.code}</span>
@@ -86,18 +80,62 @@ export default function ConversationPanel({
               >
                 <div className="message-meta">
                   <span>{message.role === "visitor" ? "YOU" : "SHAAZ"}</span>
-                  <span>
-                    {String(message.sequence).padStart(2, "0")} /{" "}
-                    {message.role === "visitor" ? "QUERY" : "LOCAL RESPONSE"}
-                  </span>
                 </div>
                 <p>
                   {message.content}
                   {message.id === messages.at(-1)?.id &&
-                    phase === "speaking" && (
+                    phase === "responding" && (
                       <span className="blinking-cursor">▌</span>
                     )}
                 </p>
+                {message.complete && message.links?.length > 0 && (
+                  <div className="response-links">
+                    {message.links.map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {link.label} <Icon name="arrow" size={14} />
+                      </a>
+                    ))}
+                  </div>
+                )}
+                {message.role === "shaaz" && message.complete && (
+                  <button
+                    type="button"
+                    className="play-response"
+                    onClick={() =>
+                      speech.activeId === message.id
+                        ? speech.stop()
+                        : onPlay(message)
+                    }
+                    disabled={!speech.supported || inputActive}
+                    title={
+                      speech.supported
+                        ? undefined
+                        : "Voice playback is unavailable in this browser"
+                    }
+                    aria-label={
+                      speech.activeId === message.id
+                        ? "Stop speaking"
+                        : `Play response ${message.sequence}`
+                    }
+                  >
+                    <Icon
+                      name={speech.activeId === message.id ? "stop" : "play"}
+                      size={14}
+                    />
+                    {speech.activeId === message.id
+                      ? speech.status === "starting"
+                        ? "Starting… · Stop"
+                        : "Stop speaking"
+                      : speech.supported
+                        ? "Listen to response"
+                        : "Voice unavailable"}
+                  </button>
+                )}
               </article>
             ))}
             {phase === "thinking" && (

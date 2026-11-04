@@ -24,11 +24,8 @@ export default function VirtualKeyboard({
   return (
     <div className={`keyboard-assembly ${expanded ? "is-expanded" : ""}`}>
       <div className="keyboard-topline">
-        <span className="keyboard-model">SH / TACTILE INTERFACE—01</span>
+        <span className="keyboard-model">VIRTUAL KEYBOARD</span>
         <div>
-          <span className="keyboard-led-label">
-            <i className="led" /> CONNECTED
-          </span>
           <button
             className="keyboard-toggle"
             onClick={onToggle}
@@ -95,12 +92,6 @@ export default function VirtualKeyboard({
             })}
           </div>
         ))}
-      </div>
-      <div className="keyboard-bottomline">
-        <span>DESIGNED FOR CURIOSITY.</span>
-        <span>
-          TYPE ON YOUR KEYBOARD OR USE THE KEYS ABOVE <span>↵</span>
-        </span>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import * as THREE from "three";
 export function buildAvatar() {
   const root = new THREE.Group();
   const head = new THREE.Group();
+  const rig = {};
   let referenceGeometry, referencePositions, referenceOriginal, mouthWeights;
   const hairGroup = new THREE.Group();
   head.add(hairGroup);
@@ -369,6 +370,7 @@ export function buildAvatar() {
   head.position.y = -1.92;
   headPivot.add(head);
   root.add(headPivot);
+  Object.assign(rig, { headPivot, torso, eyeGroups, mouthOpening, lowerLip });
   return {
     root,
     setPortraitGeometry(geometry) {
@@ -424,6 +426,12 @@ export function buildAvatar() {
       });
       mouth.position.set(0, 2.432, 0.461);
       mouth.scale.set(0.9, 0.7, 1);
+      Object.assign(rig, {
+        referenceGeometry,
+        referencePositions,
+        referenceOriginal,
+        mouthWeights,
+      });
       for (const side of [-1, 1])
         curve(
           head,
@@ -436,59 +444,6 @@ export function buildAvatar() {
           hair,
         );
     },
-    update(time, state, reducedMotion) {
-      const active = !reducedMotion;
-      const thinking = state === "thinking";
-      const listening = state === "listening";
-      const speaking = state === "speaking";
-      const targetZ = thinking
-        ? 0.06
-        : listening
-          ? -0.025
-          : active
-            ? Math.sin(time * 0.43) * 0.009
-            : 0;
-      headPivot.rotation.z = THREE.MathUtils.lerp(
-        headPivot.rotation.z,
-        targetZ,
-        0.05,
-      );
-      headPivot.rotation.y = THREE.MathUtils.lerp(
-        headPivot.rotation.y,
-        thinking ? -0.07 : active ? Math.sin(time * 0.31) * 0.018 : 0,
-        0.05,
-      );
-      headPivot.rotation.x = THREE.MathUtils.lerp(
-        headPivot.rotation.x,
-        listening ? 0.025 : active ? Math.sin(time * 0.7) * 0.008 : 0,
-        0.05,
-      );
-      torso.scale.y = 0.99 + (active ? Math.sin(time * 1.4) * 0.005 : 0);
-      const blinkTime = time % 4.9;
-      const blink =
-        active && blinkTime > 4.69
-          ? Math.max(0.08, Math.abs(blinkTime - 4.795) / 0.105)
-          : 1;
-      eyeGroups.forEach((eye) => {
-        eye.scale.y = blink;
-      });
-      const mouthAmount =
-        speaking && active
-          ? 0.6 + Math.sin(time * 19) * 0.35 + Math.sin(time * 11) * 0.15
-          : 0;
-      mouthOpening.scale.y = 0.008 + mouthAmount * 0.03;
-      if (referenceGeometry) mouthOpening.visible = speaking;
-      lowerLip.position.y = -mouthAmount * 0.028;
-      if (referencePositions) {
-        for (let i = 0; i < referencePositions.count; i++)
-          if (mouthWeights[i] > 0.005)
-            referencePositions.setY(
-              i,
-              referenceOriginal[i * 3 + 1] -
-                mouthAmount * 0.022 * mouthWeights[i],
-            );
-        referencePositions.needsUpdate = true;
-      }
-    },
+    rig,
   };
 }

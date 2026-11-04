@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MAX_INPUT_LENGTH } from "../services/mockConversationService.js";
+import { MAX_INPUT_LENGTH } from "../services/conversationContract.js";
 
 export function useKeyboardInput({
   inputRef,

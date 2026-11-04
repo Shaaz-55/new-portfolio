@@ -1,9 +1,10 @@
 import { lazy, Suspense } from "react";
 import ConversationPanel from "../conversation/ConversationPanel.jsx";
-import BootSequence from "./BootSequence.jsx";
+import BootSequence from "../hologram/BootSequence.jsx";
 
 const DigitalAvatar = lazy(() => import("../avatar/DigitalAvatar.jsx"));
 
+// Original physical monitor construction, with the current voice/conversation wiring.
 export default function CRTMonitor({
   state,
   conversation,
@@ -11,57 +12,50 @@ export default function CRTMonitor({
   reducedMotion,
   booting,
   onBootComplete,
+  speech,
+  onPlay,
+  inputActive,
+  recording,
 }) {
   return (
     <div className="monitor-assembly">
       <div className="monitor-top">
-        <span className="monitor-manufacturer">
-          <span className="manufacturer-symbol">▰</span> SHAAZ SYSTEMS
-          <span className="monitor-series">PERSONAL TERMINAL</span>
-        </span>
-        <span>
-          CRT—01 <span className="serial-number">/ 001</span>
-        </span>
+        <span>SHAAZ SYSTEMS</span>
       </div>
       <div className="monitor-bezel">
-        <i className="screw screw-tl" />
-        <i className="screw screw-tr" />
-        <i className="screw screw-bl" />
-        <i className="screw screw-br" />
+        <i className="screw screw-tl" aria-hidden="true" />
+        <i className="screw screw-tr" aria-hidden="true" />
+        <i className="screw screw-bl" aria-hidden="true" />
+        <i className="screw screw-br" aria-hidden="true" />
         <div className="crt-glass">
           <div className="screen-topline">
-            <span>
-              <i className="led" /> SHAaz INTELLIGENCE SYSTEM
-            </span>
-            <span>SESSION / LOCAL_001</span>
+            <span>PERSONAL INTELLIGENCE INTERFACE</span>
           </div>
           <div className="screen-content">
             <Suspense
               fallback={
                 <div className="avatar-region">
-                  <span className="avatar-coordinate">
-                    INITIALIZING PORTRAIT…
+                  <span className="avatar-loading" role="status">
+                    Loading portrait…
                   </span>
                 </div>
               }
             >
-              <DigitalAvatar state={state} reducedMotion={reducedMotion} />
+              <DigitalAvatar
+                state={state}
+                reducedMotion={reducedMotion}
+                recording={recording}
+              />
             </Suspense>
             <ConversationPanel
               conversation={conversation}
               onQuestion={onQuestion}
-              reducedMotion={reducedMotion}
+              speech={speech}
+              onPlay={onPlay}
+              inputActive={inputActive}
             />
           </div>
-          <div className="screen-bottomline">
-            <span>
-              <span className="terminal-square">▪</span> SYSTEM INITIALIZED
-            </span>
-            <span>HUMAN IDEAS. DIGITAL PRESENCE.</span>
-            <span>
-              CONNECTED <span className="terminal-square">▪</span>
-            </span>
-          </div>
+          <div className="screen-bottomline" aria-hidden="true" />
           <div className="crt-scanlines" aria-hidden="true" />
           <div className="glass-reflection" aria-hidden="true" />
           {booting && (
@@ -72,21 +66,13 @@ export default function CRTMonitor({
           )}
         </div>
       </div>
-      <div className="monitor-chin">
-        <span className="chin-brand">
-          SHAaz<span>©</span>
-        </span>
+      <div className="monitor-chin" aria-hidden="true">
+        <span className="chin-brand">SHAaz</span>
         <div className="chin-vents" />
-        <span className="monitor-power">
-          <i className="led" /> POWER
-        </span>
-        <div className="monitor-dials" aria-hidden="true">
+        <div className="monitor-dials">
           <i />
           <i />
         </div>
-        <span className="monitor-service-label">
-          PERSONAL INTELLIGENCE UNIT
-        </span>
       </div>
       <div className="monitor-stand" aria-hidden="true" />
     </div>

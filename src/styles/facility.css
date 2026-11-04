@@ -175,10 +175,12 @@
   pointer-events: none;
 }
 .side-panel {
-  position: absolute;
-  top: 122px;
-  width: 17%;
-  max-width: 221px;
+  position: relative;
+  top: auto;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  align-self: center;
   background: linear-gradient(
     135deg,
     #555d48,
@@ -187,8 +189,8 @@
     #47503c
   );
   border: 1px solid #7d877043;
-  border-radius: 9px 9px 6px 6px;
-  padding: 13px 13px 0;
+  border-radius: 8px 8px 5px 5px;
+  padding: 12px 8px 0;
   box-shadow:
     0 18px 25px #000a,
     inset 1px 1px 0 #a4ae8626;
@@ -205,21 +207,19 @@
   transform-origin: left center;
 }
 .side-hardware-label {
-  display: flex;
-  justify-content: space-between;
-  font: 7px var(--mono);
-  color: #a4af96;
-  letter-spacing: 0.9px;
-  padding: 0 2px 11px;
+  font: 9px var(--mono);
+  color: #c1c7b1;
+  letter-spacing: 0.6px;
+  padding: 0 2px 10px;
 }
 .side-hardware-label > span:last-child {
   color: #8d957b;
 }
 .side-screen {
   background: #07170e;
-  border-radius: 17px / 8px;
-  padding: 19px 14px 13px;
-  border: 5px solid #141c14;
+  border-radius: 14px / 8px;
+  padding: 15px 10px 13px;
+  border: 4px solid #141c14;
   box-shadow:
     inset 0 0 25px #000d,
     0 1px 0 #79836655;
@@ -256,12 +256,13 @@
   letter-spacing: 1.1px;
 }
 .side-screen h2 {
-  font-size: 23px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(18px, 1.6vw, 23px);
   font-weight: 500;
-  line-height: 1.22;
-  color: #abc997;
-  letter-spacing: -0.9px;
-  margin: 9px 0 15px;
+  line-height: 1.2;
+  color: #c6d8b9;
+  letter-spacing: -0.5px;
+  margin: 8px 0 16px;
 }
 .side-screen h2 span {
   color: #66895b;
@@ -269,20 +270,19 @@
 .identity-meta {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  font-size: 6px;
-  letter-spacing: 0.8px;
-  color: #809779;
+  gap: 7px;
+  font: 10px/1.55 var(--mono);
+  letter-spacing: 0.3px;
+  color: #a8bba0;
 }
 .side-screen-footer {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 6px;
-  letter-spacing: 0.7px;
-  color: #9ab790;
-  margin-top: 22px;
-  border-top: 1px solid #7388682b;
+  font: 9px/1.5 var(--mono);
+  color: #b5cda7;
+  margin-top: 18px;
+  border-top: 1px solid #73886840;
   padding-top: 11px;
 }
 .side-screen-footer .led {
@@ -290,10 +290,11 @@
   height: 3px;
 }
 .side-hardware-bottom {
-  height: 48px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   padding: 0 4px;
 }
 .vent-slots {
@@ -356,22 +357,25 @@
   height: 3px;
 }
 .module-link {
-  padding: 13px 0;
+  padding: 10px 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  border-bottom: 1px solid #58744c38;
+  gap: 6px;
+  border-bottom: 1px solid #58744c55;
   width: 100%;
+  min-height: 36px;
   background: none;
   text-align: left;
-  font: 9px var(--mono);
-  color: #9bb58f;
+  font:
+    12px/1.4 "Space Grotesk",
+    sans-serif;
+  color: #bccfb1;
   position: relative;
   z-index: 1;
 }
 .module-link > span {
-  font-size: 6px;
-  color: #789367;
+  font: inherit;
+  color: inherit;
 }
 .module-link > b {
   margin-left: auto;
@@ -415,4 +419,30 @@
 .indicator-array i:last-child {
   background: #273925;
   box-shadow: none;
+}
+
+.side-left {
+  grid-area: identity;
+}
+.side-right {
+  grid-area: archive;
+}
+.module-link svg {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: #97b888;
+}
+.module-link:last-child {
+  border-bottom: 0;
+}
+.fingerprint {
+  margin-bottom: 10px;
+  height: 40px;
+  opacity: 0.75;
+}
+.ceiling-beam {
+  top: 75px;
+}
+.side-screen:after {
+  opacity: 0.35;
 }

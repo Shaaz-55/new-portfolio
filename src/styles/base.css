@@ -1,17 +1,28 @@
 :root {
   font-family: "Space Grotesk", sans-serif;
-  color: #e4eae5;
-  background: #07100d;
+  color: var(--text-primary);
+  background: var(--background);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --bg: #07100d;
+  color-scheme: dark;
+  --background: #07100d;
+  --background-secondary: #101a16;
   --panel: #18231e;
-  --phosphor: #a3f5b3;
-  --green: #62c982;
-  --muted: #8b9a8f;
-  --mono: "IBM Plex Mono", monospace;
+  --crt-background: #06130d;
+  --phosphor-green: #a3f5b3;
+  --primary-green: #62c982;
+  --muted-green: #466d53;
   --hardware: #b8b9a5;
+  --amber: #d8a85b;
+  --text-primary: #e4eae5;
+  --text-secondary: #8b9a8f;
+  --bg: var(--background);
+  --phosphor: var(--phosphor-green);
+  --green: var(--primary-green);
+  --muted: var(--text-secondary);
+  --line: #71877138;
+  --mono: "IBM Plex Mono", monospace;
 }
 * {
   box-sizing: border-box;
@@ -34,12 +45,11 @@ textarea {
 button {
   cursor: pointer;
   color: inherit;
+  border: 0;
 }
 button:disabled {
   cursor: default;
-}
-button {
-  border: 0;
+  opacity: 0.45;
 }
 a {
   color: inherit;
@@ -49,15 +59,12 @@ button:focus-visible,
 a:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--phosphor);
+  outline: 2px solid var(--phosphor-green);
   outline-offset: 4px;
 }
-button:disabled {
-  opacity: 0.5;
-}
 ::selection {
-  background: #91c49d;
-  color: #07100d;
+  background: #529262;
+  color: white;
 }
 .sr-only {
   position: absolute;
@@ -71,15 +78,17 @@ button:disabled {
   border: 0;
 }
 .skip-link {
+  clip-path: inset(50%);
   position: fixed;
   top: -60px;
   left: 20px;
   z-index: 50;
-  background: var(--phosphor);
-  color: #07100d;
+  background: var(--phosphor-green);
+  color: var(--bg);
   padding: 12px;
 }
 .skip-link:focus {
+  clip-path: none;
   top: 10px;
 }
 .experience {
@@ -94,23 +103,24 @@ button:disabled {
   height: 5px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: #a3edaa;
-  box-shadow: 0 0 7px #99dd9470;
+  background: var(--phosphor-green);
+  box-shadow: 0 0 9px #86bb9370;
 }
 .micro-label {
   font: 9px var(--mono);
-  letter-spacing: 1.3px;
-  color: #87a38b;
+  letter-spacing: 1.5px;
+  color: var(--muted);
 }
 .blinking-cursor {
   animation: blink 1.2s steps(1) infinite;
 }
 .icon-button {
-  background: none;
+  background: transparent;
   display: grid;
   place-items: center;
-  color: #94a393;
-  padding: 9px;
+  color: var(--muted);
+  padding: 12px;
+  min-height: 44px;
 }
 .audio-notice {
   position: fixed;
@@ -118,11 +128,128 @@ button:disabled {
   right: 24px;
   bottom: 24px;
   max-width: 350px;
-  font: 12px/1.6 var(--mono);
-  background: #26392b;
-  border: 1px solid #638568;
+  font: 13px/1.6 var(--mono);
+  background: #1c3322;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   padding: 16px;
   box-shadow: 0 10px 40px #0009;
+}
+.system-hud {
+  height: clamp(56px, 7.2svh, 78px);
+  margin: 0 auto;
+  width: 94%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  z-index: 5;
+}
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.brand-symbol {
+  position: relative;
+  font: 600 28px/1 "Space Grotesk";
+  width: 38px;
+  height: 38px;
+  border: 1px solid #8ca08c;
+  display: flex;
+  align-items: center;
+  padding-left: 4px;
+  color: var(--hardware);
+}
+.brand-symbol span {
+  font-size: 20px;
+  margin-left: -7px;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+.brand-name {
+  font-size: 25px;
+  font-weight: 500;
+  letter-spacing: -1.4px;
+  line-height: 1;
+}
+.brand-subtitle {
+  display: block;
+  font: 9px var(--mono);
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-top: 7px;
+}
+.hud-right {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font: 10px var(--mono);
+  letter-spacing: 0.6px;
+}
+.online-status {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  color: var(--phosphor-green);
+}
+.local-status {
+  color: var(--muted);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.connection-bars {
+  color: var(--phosphor-green);
+  font-size: 14px;
+}
+.audio-button {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  border: 1px solid #75847450;
+  border-radius: 4px;
+  background: #152119;
+  color: #b5c2b6;
+  padding: 10px 12px;
+  min-height: 40px;
+  font: 10px var(--mono);
+  letter-spacing: 0.5px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.audio-button:hover,
+.audio-button.is-on {
+  background: #294831;
+  color: var(--phosphor-green);
+}
+.control-room {
+  position: relative;
+  width: 94%;
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 16px 0;
+}
+.scene-heading > div {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.section-cross {
+  font-size: 26px;
+  color: var(--phosphor-green);
+}
+.station {
+  position: relative;
+  margin: 0 auto;
+  max-width: 1450px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 5.8fr) minmax(0, 1fr);
+  grid-template-areas: "identity monitor archive" ". input .";
+  column-gap: 14px;
+  align-items: start;
 }
 @keyframes blink {
   50% {
@@ -131,7 +258,7 @@ button:disabled {
 }
 @keyframes breathe {
   50% {
-    opacity: 0.45;
+    opacity: 0.5;
   }
 }
 @keyframes arrive {
@@ -147,166 +274,9 @@ button:disabled {
 @keyframes signal {
   0%,
   100% {
-    transform: scaleY(0.35);
+    transform: scaleY(0.3);
   }
   50% {
     transform: scaleY(1);
   }
-}
-.system-hud {
-  height: 99px;
-  margin: 0 3.4%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #9eaea41c;
-  position: relative;
-  z-index: 5;
-}
-.wordmark {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.brand-symbol {
-  position: relative;
-  font: 700 28px/1 "Space Grotesk";
-  width: 38px;
-  height: 38px;
-  border: 1px solid #8ca08c;
-  display: flex;
-  align-items: center;
-  padding-left: 4px;
-  color: #c2c9b6;
-}
-.brand-symbol span {
-  font-size: 23px;
-  margin-left: -7px;
-  align-self: flex-end;
-  padding-bottom: 4px;
-}
-.brand-name {
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: -1.6px;
-  line-height: 1;
-}
-.brand-subtitle {
-  display: block;
-  font: 8px var(--mono);
-  letter-spacing: 1.4px;
-  color: #849386;
-  margin-top: 8px;
-}
-.hud-right {
-  display: flex;
-  gap: 27px;
-  align-items: center;
-  font: 9px var(--mono);
-  letter-spacing: 0.8px;
-}
-.online-status {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  color: #a9bfa8;
-}
-.local-status {
-  color: #819184;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-.connection-bars {
-  color: #90a986;
-  font-size: 14px;
-  letter-spacing: 1px;
-}
-.audio-button {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  border: 1px solid #75847436;
-  border-radius: 3px;
-  background: #15211960;
-  color: #9aab9c;
-  padding: 11px 13px;
-  font: 9px var(--mono);
-  letter-spacing: 1px;
-  transition:
-    background 0.2s,
-    color 0.2s;
-}
-.audio-button:hover,
-.audio-button.is-on {
-  background: #243b2c;
-  color: var(--phosphor);
-}
-.control-room {
-  position: relative;
-  max-width: 1680px;
-  margin: 0 auto;
-  padding: 0 3.4%;
-}
-.scene-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 89px;
-  font: 9px/1.8 var(--mono);
-  letter-spacing: 1.1px;
-  color: #738375;
-}
-.scene-heading > div {
-  display: flex;
-  gap: 13px;
-  align-items: center;
-}
-.section-cross {
-  font: 28px "Space Grotesk";
-  color: #849180;
-  font-weight: 300;
-}
-.scene-heading b {
-  color: #b3baa9;
-  font-weight: 400;
-  font-size: 10px;
-  letter-spacing: 1.1px;
-}
-.scene-heading-right {
-  text-align: right;
-}
-.station {
-  position: relative;
-  max-width: 1450px;
-  margin: 0 auto;
-}
-.room-footer {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 30px 0 22px;
-  color: #768778;
-  font: 8px/1.6 var(--mono);
-  letter-spacing: 0.9px;
-}
-.room-footer > span {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.room-footer > span:nth-child(2) {
-  color: #819182;
-}
-.room-footer i:not(.led) {
-  width: 2px;
-  height: 2px;
-  background: #6d7b6e;
-}
-.room-footer .led {
-  width: 4px;
-  height: 4px;
-  box-shadow: none;
 }

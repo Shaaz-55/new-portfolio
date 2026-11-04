@@ -2,21 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useAudio() {
   const [enabled, setEnabled] = useState(false);
-  const [speaking, setSpeaking] = useState(false);
   const [notice, setNotice] = useState("");
   const context = useRef(null);
-  const speech = useRef(null);
   const enabledRef = useRef(false);
-  const stop = useCallback(() => {
-    if (speech.current) {
-      speech.current.onend = null;
-      speech.current.onerror = null;
-      speech.current = null;
-    }
-    window.speechSynthesis?.cancel();
-    setSpeaking(false);
-  }, []);
-
   const tone = useCallback((kind = "key") => {
     if (
       !enabledRef.current ||
@@ -54,7 +42,6 @@ export function useAudio() {
     setEnabled(next);
     setNotice("");
     if (!next) {
-      stop();
       return;
     }
     try {
@@ -63,10 +50,6 @@ export function useAudio() {
       if (context.current?.state === "suspended")
         await context.current.resume();
       tone("submit");
-      if (!window.speechSynthesis)
-        setNotice(
-          "Voice is unavailable in this browser. Text and key sounds remain available.",
-        );
     } catch {
       setNotice(
         "Audio is unavailable in this browser. The text interface is ready.",
@@ -74,51 +57,12 @@ export function useAudio() {
     }
   };
 
-  const speak = useCallback(
-    (content) => {
-      stop();
-      if (!enabledRef.current || !window.speechSynthesis || document.hidden)
-        return;
-      try {
-        const utterance = new SpeechSynthesisUtterance(content);
-        utterance.rate = 1.04;
-        utterance.pitch = 0.9;
-        utterance.lang = "en-US";
-        utterance.onstart = () => setSpeaking(true);
-        utterance.onend = () => {
-          setSpeaking(false);
-          speech.current = null;
-        };
-        utterance.onerror = (event) => {
-          setSpeaking(false);
-          speech.current = null;
-          if (event.error !== "canceled" && event.error !== "interrupted")
-            setNotice(
-              "Voice playback is unavailable. The full response is shown on screen.",
-            );
-        };
-        speech.current = utterance;
-        window.speechSynthesis.speak(utterance);
-      } catch {
-        setNotice(
-          "Voice playback is unavailable. The full response is shown on screen.",
-        );
-      }
-    },
-    [stop],
-  );
-
-  useEffect(() => {
-    const hide = () => {
-      if (document.hidden) stop();
-    };
-    document.addEventListener("visibilitychange", hide);
-    return () => {
-      document.removeEventListener("visibilitychange", hide);
-      stop();
+  useEffect(
+    () => () => {
       context.current?.close().catch(() => {});
       context.current = null;
-    };
-  }, [stop]);
-  return { enabled, speaking, notice, toggle, tone, speak, stop };
+    },
+    [],
+  );
+  return { enabled, notice, toggle, tone };
 }

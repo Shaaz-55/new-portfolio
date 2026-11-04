@@ -6,9 +6,6 @@ export default function FacilityEnvironment() {
       <div className="server-wall">
         {Array.from({ length: 10 }, (_, rack) => (
           <div className="server-rack" key={rack}>
-            <span className="rack-label">
-              S / {String(rack + 1).padStart(2, "0")}
-            </span>
             {Array.from({ length: 5 }, (_, unit) => (
               <div className="server-unit" key={unit}>
                 <div className="tape-reels">

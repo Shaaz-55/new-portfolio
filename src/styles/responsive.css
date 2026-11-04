@@ -1,886 +1,457 @@
-@media (min-width: 1700px) {
-  .system-hud {
-    height: 115px;
-  }
-  .scene-heading {
-    height: 105px;
-  }
-  .monitor-assembly {
-    width: 66%;
-  }
+/* Keep the CRT, input and mechanical keys together in the desktop viewport. */
+@media (min-width: 1100px) and (max-height: 800px) {
   .crt-glass {
-    height: 455px;
+    height: clamp(280px, calc(100svh - 436px), 348px);
   }
-  .conversation-panel {
-    padding: 25px 33px 15px;
+  .control-room {
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
   .welcome-screen h1 {
-    font-size: 46px;
-  }
-  .welcome-greeting {
-    font-size: 10px;
-    margin-bottom: 15px;
+    font-size: 31px;
+    margin-bottom: 10px;
   }
   .welcome-screen > p {
-    font-size: 9px;
-    line-height: 1.9;
-    margin-bottom: 22px;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .conversation-panel {
+    padding-top: 12px;
+    padding-bottom: 10px;
   }
   .suggestion {
-    font-size: 9px;
-    min-height: 35px;
-  }
-  .terminal-eyebrow {
-    font-size: 7px;
+    min-height: 32px;
+    padding-top: 6px;
+    padding-bottom: 6px;
   }
   .avatar-name h2 {
-    font-size: 32px;
-  }
-  .avatar-name {
-    bottom: 62px;
-  }
-  .avatar-name .micro-label {
-    font-size: 6px;
-  }
-  .avatar-name p {
-    font-size: 7px;
-  }
-  .avatar-state {
-    bottom: 31px;
-    font-size: 7px;
-  }
-  .avatar-disclosure {
-    font-size: 5px;
-    bottom: 12px;
-  }
-  .message p {
-    font-size: 12px;
-  }
-  .message-meta {
-    font-size: 8px;
-  }
-  .screen-topline {
-    font-size: 7px;
-  }
-  .screen-bottomline {
-    font-size: 6px;
-  }
-  .input-deck {
-    margin-top: 24px;
-  }
-  .input-label-row {
-    font-size: 8px;
-  }
-  .input-label-row > span {
-    font-size: 6px;
-  }
-  .input-well {
-    height: 51px;
-  }
-  .input-well textarea {
-    font-size: 13px;
-  }
-  .input-well textarea::placeholder {
-    font-size: 12px;
-  }
-  .key {
-    height: 29px;
-    font-size: 10px;
-  }
-  .key-space {
-    font-size: 6px;
-  }
-  .key-enter,
-  .key-shift {
-    font-size: 7px;
-  }
-  .keyboard-topline {
-    height: 29px;
-    font-size: 6px;
-  }
-  .keyboard-bottomline {
-    height: 25px;
-  }
-  .side-panel {
-    top: 145px;
+    font-size: 20px;
   }
   .side-screen {
-    padding-top: 24px;
-    padding-bottom: 22px;
+    padding-top: 11px;
+    padding-bottom: 10px;
   }
   .side-screen h2 {
-    font-size: 26px;
+    margin-bottom: 12px;
   }
   .identity-meta {
-    font-size: 7px;
+    gap: 5px;
+  }
+  .side-screen-footer {
+    margin-top: 12px;
+  }
+  .fingerprint {
+    height: 31px;
+    margin-bottom: 7px;
   }
   .module-link {
-    padding: 16px 0;
-    font-size: 10px;
-  }
-  .room-footer {
-    margin-top: 33px;
-    font-size: 9px;
+    min-height: 33px;
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
 }
-@media (min-width: 1201px) and (max-height: 820px) {
-  .system-hud {
-    height: 75px;
-  }
-  .scene-heading {
-    height: 60px;
-  }
+@media (min-width: 1700px) {
   .crt-glass {
-    height: 335px;
+    height: clamp(360px, calc(100svh - 430px), 520px);
+  }
+  .welcome-screen h1 {
+    font-size: 41px;
+  }
+  .welcome-screen > p {
+    font-size: 15px;
+  }
+  .suggestion {
+    min-height: 41px;
+    font-size: 13px;
+  }
+  .side-hardware-label {
+    font-size: 10px;
+  }
+  .identity-meta {
+    font-size: 11px;
+  }
+  .side-screen-footer {
+    font-size: 10px;
+  }
+  .module-link {
+    font-size: 13px;
+    min-height: 42px;
+  }
+  .avatar-disclosure {
+    font-size: 9px;
+  }
+  .avatar-state {
+    font-size: 10px;
+  }
+}
+@media (max-width: 1250px) and (min-width: 1100px) {
+  .system-hud,
+  .control-room {
+    width: 96%;
+  }
+  .station {
+    column-gap: 11px;
+  }
+  .side-hardware-label {
+    font-size: 8px;
+    letter-spacing: 0.2px;
+  }
+  .side-panel {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+  .side-screen {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+  .module-link {
+    font-size: 11px;
+  }
+  .identity-meta {
+    font-size: 9px;
+  }
+  .side-screen-footer {
+    font-size: 8px;
+  }
+  .avatar-state {
+    font-size: 8px;
+  }
+  .avatar-disclosure {
+    font-size: 7px;
+  }
+}
+@media (min-width: 768px) and (max-width: 1099px) {
+  .station {
+    max-width: 940px;
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas: "monitor monitor" "input input" "identity archive";
+    gap: 0 20px;
+  }
+  .input-deck {
+    width: 94%;
+  }
+  .side-panel {
+    margin-top: 26px;
+    align-self: stretch;
+    transform: none;
+  }
+  .side-hardware-label {
+    font-size: 11px;
+  }
+  .side-screen {
+    padding: 16px;
+  }
+  .side-screen h2 br {
+    display: none;
+  }
+  .fingerprint {
+    display: none;
+  }
+  .identity-meta {
+    font-size: 11px;
+  }
+  .side-screen-footer {
+    font-size: 10px;
+  }
+  .side-right .side-screen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+  }
+  .module-link {
+    font-size: 13px;
+    min-height: 44px;
+  }
+  .side-hardware-bottom {
+    height: 32px;
+  }
+  .welcome-screen h1 {
+    font-size: clamp(30px, 3.8vw, 38px);
   }
   .conversation-panel {
     padding-top: 14px;
   }
-  .welcome-greeting {
-    margin-top: 9px;
-    margin-bottom: 8px;
-  }
-  .welcome-screen h1 {
-    font-size: 32px;
-    margin-bottom: 10px;
-  }
   .welcome-screen > p {
-    margin-bottom: 11px;
+    font-size: 14px;
   }
-  .suggestion {
-    min-height: 25px;
-    font-size: 6.5px;
-  }
-  .input-deck {
-    margin-top: 16px;
-  }
-  .input-console {
-    margin-bottom: 8px;
-  }
-  .input-label-row {
-    padding-bottom: 6px;
-  }
-  .input-well {
-    min-height: 39px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-  .key {
-    height: 20px;
-  }
-  .keyboard-body {
-    gap: 4px;
-  }
-  .keyboard-topline {
-    height: 20px;
-  }
-  .keyboard-bottomline {
-    height: 17px;
-  }
-  .room-footer {
-    margin-top: 25px;
-    margin-bottom: 14px;
-  }
-  .side-panel {
-    top: 100px;
-  }
-  .side-screen {
-    padding: 13px 11px 10px;
-  }
-  .fingerprint {
-    margin-bottom: 10px;
-  }
-  .side-screen h2 {
+  .avatar-name h2 {
     font-size: 21px;
-  }
-  .module-link {
-    padding: 11px 0;
-  }
-}
-@media (min-width: 1201px) and (max-height: 740px) {
-  .system-hud {
-    height: 65px;
-  }
-  .scene-heading {
-    height: 47px;
-  }
-  .crt-glass {
-    height: 311px;
-  }
-  .screen-topline {
-    height: 25px;
-  }
-  .screen-bottomline {
-    height: 21px;
-  }
-  .welcome-screen h1 {
-    font-size: 30px;
-  }
-  .welcome-screen > p {
-    font-size: 6px;
-  }
-  .welcome-greeting {
-    font-size: 7px;
-  }
-  .suggestion {
-    min-height: 24px;
-    font-size: 6px;
-    padding: 5px;
-  }
-  .suggestions {
-    gap: 6px;
-  }
-  .monitor-chin {
-    height: 31px;
-  }
-  .key {
-    height: 19px;
-  }
-  .input-deck {
-    margin-top: 14px;
-  }
-  .room-footer {
-    margin-top: 22px;
-  }
-}
-@media (max-width: 1200px) and (min-width: 768px) {
-  .system-hud {
-    height: 82px;
-    margin: 0 3%;
   }
   .hud-right {
-    gap: 16px;
-    font-size: 8px;
-  }
-  .control-room {
-    padding: 0 3%;
-  }
-  .scene-heading {
-    height: 65px;
-  }
-  .side-panel {
-    width: 14%;
-    padding: 9px 7px 0;
-    top: 120px;
-    opacity: 0.7;
-  }
-  .side-screen {
-    padding: 13px 8px 10px;
-  }
-  .side-hardware-label {
-    font-size: 5px;
-    letter-spacing: 0;
-  }
-  .side-screen h2 {
-    font-size: 17px;
-  }
-  .side-screen .micro-label {
-    font-size: 4px;
-  }
-  .identity-meta {
-    font-size: 4px;
-    letter-spacing: 0.3px;
-  }
-  .side-screen-footer {
-    font-size: 4px;
-    letter-spacing: 0.3px;
-  }
-  .fingerprint {
-    transform: scale(0.8);
-    transform-origin: left bottom;
-    margin-top: -8px;
-  }
-  .side-caption {
-    font-size: 4px;
-  }
-  .module-heading {
-    font-size: 5px;
-    letter-spacing: 0;
-  }
-  .module-link {
-    font-size: 6px;
-    gap: 4px;
-    padding: 11px 0;
-  }
-  .module-link > span {
-    font-size: 4px;
-  }
-  .module-link > b {
-    font-size: 10px;
-  }
-  .signal-label {
-    font-size: 4px;
-    letter-spacing: 0;
-  }
-  .monitor-assembly {
-    width: 73%;
-  }
-  .crt-glass {
-    height: 345px;
-    border-width: 5px;
-  }
-  .monitor-bezel {
-    padding: 10px 12px;
-  }
-  .monitor-top {
-    font-size: 6px;
-    padding: 0 16px;
-    height: 23px;
-  }
-  .monitor-series {
-    display: none;
-  }
-  .conversation-panel {
-    padding: 17px 19px 10px;
-  }
-  .welcome-screen h1 {
-    font-size: 31px;
-  }
-  .welcome-screen > p {
-    font-size: 7px;
-  }
-  .welcome-greeting {
-    font-size: 7px;
-  }
-  .suggestion {
-    font-size: 6px;
-    gap: 5px;
-    padding: 5px;
-  }
-  .suggestion-code {
-    font-size: 4px;
-  }
-  .suggestion svg {
-    width: 11px;
-  }
-  .terminal-eyebrow {
-    font-size: 4.5px;
-    letter-spacing: 0.7px;
-  }
-  .screen-topline {
-    font-size: 5px;
-  }
-  .screen-bottomline {
-    font-size: 4px;
-  }
-  .avatar-name {
-    left: 18px;
-  }
-  .avatar-name h2 {
-    font-size: 21px;
-  }
-  .avatar-name .micro-label {
-    font-size: 4px;
-  }
-  .avatar-name p {
-    font-size: 4px;
-  }
-  .avatar-state,
-  .avatar-disclosure {
-    left: 18px;
-    font-size: 4px;
-  }
-  .input-deck {
-    width: 65%;
-    margin-top: 18px;
-  }
-  .monitor-chin {
-    gap: 12px;
-    height: 32px;
-  }
-  .chin-vents {
-    width: 43px;
-  }
-  .monitor-service-label {
-    font-size: 4px;
-  }
-  .room-footer {
-    font-size: 6px;
-    letter-spacing: 0.5px;
-  }
-  .message p {
-    font-size: 10px;
-  }
-  .local-status {
-    display: none;
-  }
-}
-@media (min-width: 768px) and (max-width: 900px) {
-  .side-panel {
-    display: none;
-  }
-  .monitor-assembly {
-    width: 94%;
-  }
-  .input-deck {
-    width: 86%;
-  }
-  .crt-glass {
-    height: 460px;
-  }
-  .conversation-panel {
-    padding: 25px 25px 15px;
-  }
-  .welcome-screen h1 {
-    font-size: 37px;
-  }
-  .welcome-screen > p {
-    font-size: 8px;
-    line-height: 2;
-  }
-  .welcome-greeting {
-    font-size: 8px;
-    margin-bottom: 20px;
-  }
-  .suggestions {
-    grid-template-columns: 1fr;
-    gap: 7px;
-  }
-  .suggestion {
-    font-size: 8px;
-    min-height: 29px;
-  }
-  .terminal-eyebrow {
-    font-size: 6px;
-  }
-  .screen-topline {
-    font-size: 6px;
-  }
-  .screen-bottomline {
-    font-size: 5px;
-  }
-  .avatar-name h2 {
-    font-size: 26px;
-  }
-  .avatar-name .micro-label {
-    font-size: 5px;
-  }
-  .avatar-name p {
-    font-size: 5px;
-  }
-  .avatar-coordinate {
-    font-size: 7px;
-  }
-  .key {
-    height: 31px;
-  }
-  .keyboard-body {
-    gap: 6px;
-  }
-  .keyboard-topline {
-    height: 27px;
-  }
-  .keyboard-bottomline {
-    height: 24px;
-  }
-  .input-well {
-    min-height: 51px;
-  }
-  .input-label-row {
-    font-size: 7px;
-  }
-  .input-well textarea {
-    font-size: 12px;
-  }
-  .scene-heading {
-    height: 87px;
-  }
-  .room-footer {
-    margin-top: 40px;
-  }
-  .room-footer > span:nth-child(2) {
-    font-size: 5px;
-  }
-  .avatar-canvas {
-    inset: 0 -35% -4%;
-  }
-  .avatar-state {
-    font-size: 6px;
-  }
-  .avatar-disclosure {
-    font-size: 5px;
-  }
-  .conversation-heading {
-    font-size: 7px;
-  }
-  .message p {
-    font-size: 11px;
-    line-height: 1.8;
+    gap: 10px;
   }
 }
 @media (max-width: 767px) {
-  .experience {
-    min-height: 100svh;
+  .system-hud,
+  .control-room {
+    width: calc(100% - 24px);
   }
   .system-hud {
-    height: 75px;
-    margin: 0 20px;
+    height: 66px;
+  }
+  .control-room {
+    padding-top: 14px;
+  }
+  .brand-name {
+    font-size: 23px;
+  }
+  .brand-symbol {
+    width: 33px;
+    height: 33px;
+    font-size: 23px;
+  }
+  .brand-subtitle {
+    font-size: 7px;
+    letter-spacing: 0.5px;
   }
   .wordmark {
     gap: 9px;
   }
-  .brand-symbol {
-    height: 29px;
-    width: 29px;
-    font-size: 22px;
-    padding-left: 3px;
-  }
-  .brand-symbol span {
-    font-size: 18px;
-    margin-left: -6px;
-  }
-  .brand-name {
-    font-size: 24px;
-  }
-  .brand-subtitle {
-    font-size: 5px;
-    letter-spacing: 0.7px;
-    margin-top: 6px;
-  }
   .hud-right {
-    gap: 6px;
+    gap: 4px;
   }
-  .online-status,
-  .local-status {
+  .online-status {
     display: none;
   }
   .audio-button {
-    padding: 9px;
-    border-color: #75847450;
+    padding: 10px;
+    min-height: 44px;
   }
   .audio-button > span {
     display: none;
   }
-  .reset-button {
-    padding: 8px;
-  }
-  .control-room {
-    padding: 0 14px;
-  }
-  .scene-heading {
-    height: 59px;
-    padding: 0 5px;
-    font-size: 6px;
-    letter-spacing: 0.7px;
-  }
-  .scene-heading > div {
-    gap: 9px;
-  }
-  .scene-heading b {
-    font-size: 7px;
-    letter-spacing: 0.4px;
-  }
-  .section-cross {
-    font-size: 23px;
-  }
-  .scene-heading-right {
-    font-size: 5px;
-  }
-  .scene-heading-right b {
-    font-size: 5px;
-  }
   .station {
-    max-width: 520px;
-  }
-  .side-panel {
-    display: none;
+    display: flex;
+    flex-direction: column;
+    max-width: 560px;
   }
   .monitor-assembly {
+    order: 0;
     width: 100%;
   }
   .monitor-top {
-    height: 22px;
-    padding: 0 13px;
-    font-size: 5px;
-    letter-spacing: 0.7px;
-    border-radius: 10px 10px 0 0;
-  }
-  .monitor-series {
-    display: none;
-  }
-  .manufacturer-symbol {
-    font-size: 10px;
-  }
-  .monitor-manufacturer {
-    gap: 4px;
+    height: 19px;
+    padding: 0 15px;
+    font-size: 8px;
   }
   .monitor-bezel {
-    padding: 9px 9px 10px;
+    padding: 9px;
   }
   .crt-glass {
-    height: clamp(459px, 57svh, 610px);
+    height: auto;
     border-width: 4px;
-    border-radius: 18px / 12px;
+    border-radius: 20px / 14px;
   }
   .screen-topline {
-    height: 23px;
-    margin: 0 10px;
-    font-size: 4.5px;
-    letter-spacing: 0.5px;
-  }
-  .screen-topline .led {
-    height: 2px;
-    width: 2px;
-  }
-  .screen-topline > span:first-child {
-    gap: 4px;
+    height: 25px;
+    font-size: 8px;
+    letter-spacing: 0.6px;
+    margin: 0 12px;
   }
   .screen-content {
     display: flex;
     flex-direction: column;
   }
+  .screen-bottomline {
+    height: 5px;
+  }
+  .monitor-chin {
+    height: 26px;
+    padding: 0 17px;
+  }
+  .chin-brand {
+    font-size: 15px;
+  }
+  .chin-vents {
+    width: 50px;
+  }
+  .monitor-stand {
+    height: 15px;
+    bottom: -15px;
+  }
   .avatar-region {
     height: 154px;
     flex: 0 0 154px;
     border-right: 0;
-    border-bottom: 1px solid #6e9d6629;
-    background: radial-gradient(ellipse at 32% 50%, #48604430, transparent 70%);
+    border-bottom: 1px solid #63836330;
   }
   .avatar-canvas {
-    inset: -18px 34% -34px -10%;
+    inset: -32px 35% -34px -4%;
+    transform: scale(0.82);
+    transform-origin: center;
   }
   .avatar-fallback {
-    width: 58%;
-    height: 205px;
-    left: -1%;
-    bottom: -33px;
-  }
-  .avatar-coordinate {
-    font-size: 5px;
-    top: 10px;
-    left: 12px;
-    letter-spacing: 0.5px;
-  }
-  .avatar-coordinate span {
-    font-size: 4px;
-  }
-  .avatar-reticle {
-    inset: 11px 55% 14px 20px;
+    width: 45%;
+    left: 4%;
+    height: 160px;
+    bottom: -8px;
   }
   .avatar-shade {
+    inset: 0;
     background:
-      linear-gradient(90deg, transparent 25%, #08180e77 42%, #08180e 63%),
-      linear-gradient(transparent 60%, #08180e);
+      linear-gradient(90deg, transparent 25%, #06130d70 50%, #06130d 70%),
+      linear-gradient(transparent 80%, #06130d);
   }
   .avatar-name {
-    bottom: 60px;
-    left: 50%;
-    right: 5px;
-  }
-  .avatar-name .micro-label {
-    font-size: 4px;
-    letter-spacing: 0.5px;
-    max-width: 100px;
-    display: block;
-    line-height: 1.7;
+    left: 49%;
+    bottom: 84px;
+    right: 10px;
   }
   .avatar-name h2 {
     font-size: 20px;
-    letter-spacing: -1px;
-    margin: 6px 0;
-  }
-  .avatar-name h2 span {
-    font-size: 8px;
-    padding-left: 3px;
-  }
-  .avatar-name p {
-    font-size: 3.7px;
-    letter-spacing: 0.25px;
+    line-height: 1.12;
+    letter-spacing: -0.6px;
   }
   .avatar-state {
-    left: 50%;
-    bottom: 35px;
-    right: 16px;
-    font-size: 4px;
-    letter-spacing: 0.5px;
+    left: 49%;
+    bottom: 55px;
+    right: 10px;
+    font-size: 8px;
+    letter-spacing: 0.1px;
+    gap: 5px;
+  }
+  .avatar-state .voice-bars {
+    display: none;
   }
   .avatar-disclosure {
-    left: 50%;
-    bottom: 23px;
-    font-size: 3px;
-    letter-spacing: 0.2px;
-  }
-  .voice-bars {
-    gap: 1px;
-    height: 10px;
-  }
-  .voice-bars i {
-    width: 1px;
+    left: 49%;
+    bottom: 26px;
+    right: 9px;
+    font-size: 7px;
+    line-height: 1.5;
   }
   .conversation-panel {
-    padding: 12px 18px 10px;
-    flex: 1;
-    min-height: 0;
+    padding: 17px;
+    min-height: 293px;
   }
-  .terminal-eyebrow {
-    font-size: 4.5px;
-    letter-spacing: 0.8px;
-  }
-  .terminal-version {
-    font-size: 4px;
+  .conversation-panel.has-conversation {
+    height: 320px;
   }
   .welcome-screen {
     margin: auto 0;
   }
-  .welcome-greeting {
-    font-size: 7px;
-    margin: 9px 0 7px;
-  }
   .welcome-screen h1 {
-    font-size: 33px;
-    line-height: 1.04;
-    letter-spacing: -1.4px;
-    margin-bottom: 8px;
-  }
-  .welcome-screen h1 br:first-of-type {
-    display: none;
+    font-size: 29px;
+    line-height: 1.14;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
   }
   .welcome-screen > p {
-    font-size: 6px;
-    line-height: 1.8;
-    margin-bottom: 11px;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 14px;
   }
-  .heading-cursor {
-    height: 21px;
-    width: 7px;
-  }
-  .suggestions {
-    gap: 6px;
+  .desktop-break {
+    display: none;
   }
   .suggestion {
-    min-height: 31px;
-    font-size: 6px;
-    padding: 7px;
-    gap: 5px;
+    min-height: 40px;
+    font-size: 11px;
+    gap: 6px;
+    padding: 8px;
   }
   .suggestion-code {
-    font-size: 4px;
-  }
-  .suggestion svg {
-    width: 11px;
-  }
-  .screen-bottomline {
-    height: 21px;
-    margin: 0 10px;
-    font-size: 4px;
-    letter-spacing: 0.4px;
-  }
-  .screen-bottomline > span:nth-child(2) {
-    display: none;
-  }
-  .monitor-chin {
-    height: 30px;
-    padding: 0 16px;
-    gap: 12px;
-  }
-  .chin-brand {
-    font-size: 14px;
-  }
-  .chin-vents {
-    height: 8px;
-    width: 43px;
-  }
-  .monitor-power {
-    font-size: 4px;
-  }
-  .monitor-dials {
-    gap: 5px;
-  }
-  .monitor-dials i {
-    width: 10px;
-    height: 10px;
-  }
-  .monitor-service-label {
-    display: none;
-  }
-  .monitor-stand {
-    height: 19px;
-    bottom: -19px;
+    font-size: 8px;
   }
   .input-deck {
-    width: 94%;
-    margin-top: 17px;
-  }
-  .input-console {
-    padding: 0;
-    margin-bottom: 11px;
+    order: 1;
+    width: 97%;
+    margin-top: 16px;
   }
   .input-label-row {
-    font-size: 5px;
-    letter-spacing: 0.5px;
-    padding-bottom: 7px;
+    font-size: 8px;
+    letter-spacing: 0.3px;
   }
   .input-label-row > span {
-    font-size: 4px;
+    font-size: 8px;
+  }
+  .input-label-row label > span {
+    display: none;
   }
   .input-well {
-    min-height: 50px;
-    padding: 6px 6px 6px 11px;
-    gap: 8px;
+    gap: 7px;
+    padding: 5px;
+  }
+  .input-prompt {
+    display: none;
   }
   .input-well textarea {
     font-size: 16px;
-    line-height: 1.4;
-    height: 28px;
+    height: 44px;
+    line-height: 21px;
   }
   .input-well textarea::placeholder {
-    font-size: 11px;
-  }
-  .input-prompt {
     font-size: 13px;
   }
-  .submit-button {
-    min-width: 45px;
-    min-height: 36px;
-    justify-content: center;
-    padding: 7px;
+  .mic-button {
+    flex-basis: 42px;
+    height: 42px;
   }
-  .submit-button span {
+  .submit-button {
+    min-height: 44px;
+    width: 40px;
+    padding: 8px;
+  }
+  .submit-button > span {
     display: none;
   }
+  .voice-status {
+    font-size: 11px;
+  }
+  .voice-guidance {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+  .input-shortcut {
+    display: none;
+  }
+  .recording-status {
+    font-size: 9px;
+    gap: 8px;
+  }
+  .recording-status .voice-bars {
+    gap: 2px;
+  }
+  .text-button {
+    min-height: 32px;
+  }
   .keyboard-assembly {
-    padding: 0 9px;
     transform: none;
-    border-radius: 4px;
+    padding: 0 9px;
     box-shadow:
       0 4px 0 #1c271a,
       0 8px 12px #0009;
   }
+  .keyboard-model {
+    display: block;
+    font: 9px var(--mono);
+    color: #b1bea5;
+    letter-spacing: 0.4px;
+  }
   .keyboard-topline {
-    height: 31px;
-    font-size: 4px;
-    letter-spacing: 0.5px;
+    height: 40px;
   }
   .keyboard-toggle {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font: 5px var(--mono);
-    letter-spacing: 0.4px;
+    gap: 6px;
+    font: 9px var(--mono);
+    letter-spacing: 0.3px;
     background: none;
-    color: #b5c3a5;
-    min-height: 31px;
+    color: var(--phosphor-green);
+    min-height: 40px;
     padding: 5px 0 5px 8px;
   }
-  .keyboard-led-label {
-    font-size: 3px;
-    letter-spacing: 0.5px;
-  }
-  .keyboard-model {
-    font-size: 4px;
-  }
-  .keyboard-body,
-  .keyboard-bottomline {
+  .keyboard-body {
     display: none;
   }
   .keyboard-assembly.is-expanded .keyboard-body {
     display: flex;
-  }
-  .keyboard-assembly.is-expanded .keyboard-bottomline {
-    display: flex;
+    margin-bottom: 10px;
   }
   .keyboard-body {
-    padding: 6px 5px 9px;
+    padding: 6px 4px 10px;
     gap: 7px;
   }
   .keyboard-row {
@@ -888,79 +459,90 @@
   }
   .key {
     height: 34px;
-    font-size: 8px;
+    font-size: 9px;
   }
   .key-enter {
-    font-size: 5px;
+    font-size: 8px;
     gap: 4px;
   }
-  .key-shift {
-    font-size: 4px;
-  }
+  .key-shift,
   .key-space {
-    font-size: 4px;
+    font-size: 7px;
   }
   .key-backspace svg {
-    width: 12px;
+    width: 13px;
   }
-  .key-enter svg {
-    width: 10px;
+  .side-panel {
+    order: 2;
+    margin-top: 22px;
+    align-self: auto;
+    transform: none;
+    padding: 12px 10px 0;
   }
-  .keyboard-bottomline {
-    font-size: 3px;
-    letter-spacing: 0.1px;
-    height: 22px;
+  .side-hardware-label {
+    font-size: 10px;
   }
-  .keyboard-bottomline > span:last-child {
-    font-size: 3px;
-    letter-spacing: 0;
+  .side-screen {
+    padding: 13px;
   }
-  .room-footer {
-    max-width: 520px;
-    margin: 22px auto 17px;
-    padding: 0 5px;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 7px;
-    font-size: 4px;
-    letter-spacing: 0.35px;
-  }
-  .room-footer > span:first-child {
-    width: 100%;
-    justify-content: center;
-  }
-  .room-footer > span:last-child {
+  .side-screen h2 br {
     display: none;
   }
-  .room-footer .led {
-    width: 3px;
-    height: 3px;
+  .side-screen h2 {
+    font-size: 23px;
+    margin: 0 0 10px;
+  }
+  .fingerprint {
+    display: none;
+  }
+  .identity-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    font-size: 10px;
+  }
+  .side-screen-footer {
+    font-size: 10px;
+    margin-top: 13px;
+  }
+  .side-right .side-screen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+  }
+  .module-link {
+    font-size: 13px;
+    min-height: 44px;
+  }
+  .side-hardware-bottom {
+    height: 30px;
+  }
+  .vent-slots {
+    max-width: 100px;
   }
   .message p,
   .message-visitor p {
-    font-size: 10px;
-    line-height: 1.85;
+    font-size: 15px;
+    line-height: 1.7;
   }
   .message-meta {
-    font-size: 6px;
+    font-size: 10px;
   }
-  .message {
-    margin: 13px 0 17px;
+  .play-response {
+    min-height: 40px;
   }
   .conversation-heading {
-    font-size: 5px;
-    margin-top: 10px;
-    padding-bottom: 8px;
+    font-size: 10px;
   }
-  .conversation-hint {
-    font-size: 5px;
-    padding-top: 7px;
-  }
-  .conversation-scroll {
-    padding-right: 6px;
+  .audio-notice {
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    max-width: none;
+    font-size: 12px;
   }
   .server-wall {
-    opacity: 0.17;
+    opacity: 0.16;
     gap: 7px;
   }
   .server-rack {
@@ -969,431 +551,53 @@
   .server-rack:nth-child(n + 7) {
     display: none;
   }
-  .desk-surface {
-    top: 72%;
-    height: 210px;
-  }
   .ceiling-beam {
-    top: 70px;
+    top: 65px;
+  }
+  .desk-surface {
+    top: 600px;
+    height: 220px;
   }
   .boot-overlay .micro-label {
-    font-size: 5px;
-  }
-  .audio-notice {
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
-    max-width: none;
-    font-size: 10px;
+    font-size: 8px;
   }
 }
 @media (max-width: 359px) {
-  .scene-heading-right {
-    display: none;
-  }
   .brand-subtitle {
-    font-size: 4px;
-  }
-  .welcome-screen h1 {
-    font-size: 28px;
-  }
-  .welcome-screen > p {
-    font-size: 5.5px;
-  }
-  .suggestion {
-    font-size: 5px;
+    font-size: 6px;
   }
   .avatar-name h2 {
-    font-size: 17px;
+    font-size: 18px;
   }
-  .avatar-name .micro-label {
-    font-size: 3.5px;
+  .avatar-state {
+    font-size: 7px;
   }
-  .avatar-name p {
-    font-size: 3.3px;
+  .avatar-disclosure {
+    font-size: 6px;
   }
-  .screen-topline {
-    font-size: 4px;
+  .conversation-panel {
+    padding: 14px 12px;
   }
-  .input-label-row {
-    font-size: 4px;
+  .welcome-screen h1 {
+    font-size: 26px;
   }
-  .keyboard-led-label {
+  .suggestion {
+    font-size: 10px;
+    gap: 5px;
+  }
+  .recording-status .voice-bars {
     display: none;
-  }
-  .conversation-panel {
-    padding-left: 13px;
-    padding-right: 13px;
-  }
-}
-/* Height-sensitive composition keeps the input and keyboard reachable. */
-@media (min-width: 901px) {
-  .system-hud {
-    height: 83px;
-  }
-  .scene-heading {
-    height: 52px;
-  }
-  .crt-glass {
-    height: clamp(320px, 39vh, 440px);
-  }
-  .key {
-    height: 20px;
-  }
-  .keyboard-topline {
-    height: 23px;
-  }
-  .keyboard-bottomline {
-    height: 17px;
-  }
-  .room-footer {
-    margin-top: 21px;
-    margin-bottom: 14px;
-  }
-  .conversation-panel {
-    padding-top: 14px;
-  }
-  .welcome-screen h1 {
-    font-size: clamp(28px, 2.5vw, 40px);
-    margin-bottom: 8px;
-  }
-  .welcome-greeting {
-    font-size: 9px;
-    margin: 8px 0;
-  }
-  .welcome-screen > p {
-    font-size: 9px;
-    line-height: 1.6;
-    margin-bottom: 9px;
-  }
-  .suggestion {
-    font-size: 8px;
-    min-height: 27px;
-    padding: 5px 8px;
-  }
-  .suggestions {
-    gap: 6px 10px;
-  }
-  .terminal-eyebrow {
-    font-size: 6px;
-  }
-  .side-screen .micro-label {
-    font-size: 7px;
-  }
-  .identity-meta {
-    font-size: 7px;
-    letter-spacing: 0.4px;
-  }
-  .side-screen-footer {
-    font-size: 7px;
-    letter-spacing: 0.4px;
-  }
-  .module-link {
-    font-size: 10px;
-  }
-  .screen-topline {
-    font-size: 7px;
-  }
-  .screen-bottomline {
-    font-size: 6px;
-    letter-spacing: 0.5px;
-  }
-}
-@media (min-width: 901px) and (max-height: 800px) {
-  .system-hud {
-    height: 58px;
-  }
-  .scene-heading {
-    height: 32px;
-  }
-  .crt-glass {
-    height: 290px;
-  }
-  .monitor-top {
-    height: 22px;
-  }
-  .monitor-chin {
-    height: 29px;
-  }
-  .monitor-bezel {
-    padding-top: 10px;
-    padding-bottom: 9px;
-  }
-  .key {
-    height: 16px;
-  }
-  .keyboard-topline {
-    height: 19px;
-  }
-  .keyboard-bottomline {
-    height: 15px;
-  }
-  .input-deck {
-    margin-top: 15px;
-  }
-  .input-well {
-    min-height: 37px;
-  }
-  .input-console {
-    margin-bottom: 8px;
-  }
-  .input-label-row {
-    padding-bottom: 6px;
-  }
-  .keyboard-body {
-    gap: 4px;
-  }
-  .room-footer {
-    margin-top: 18px;
-    margin-bottom: 8px;
-  }
-  .welcome-screen h1 {
-    font-size: 26px;
-    margin-bottom: 6px;
-  }
-  .welcome-screen > p {
-    font-size: 8px;
-    line-height: 1.5;
-    margin-bottom: 6px;
-  }
-  .welcome-greeting {
-    font-size: 8px;
-    margin: 5px 0;
-  }
-  .suggestion {
-    min-height: 24px;
-    font-size: 7px;
-    padding: 4px 6px;
-  }
-  .terminal-eyebrow {
-    font-size: 5px;
-  }
-  .screen-topline {
-    font-size: 5.5px;
-  }
-  .screen-bottomline {
-    font-size: 4.5px;
-  }
-  .conversation-panel {
-    padding-top: 9px;
-    padding-bottom: 7px;
-  }
-  .side-panel {
-    top: 82px;
-  }
-  .side-screen h2 {
-    font-size: 21px;
-  }
-  .module-link {
-    font-size: 9px;
-  }
-  .screen-content {
-    grid-template-columns: 40% 60%;
-  }
-  .side-screen {
-    padding: 13px 10px 10px;
-  }
-  .avatar-name {
-    bottom: 46px;
-  }
-  .avatar-state {
-    bottom: 23px;
-  }
-  .avatar-disclosure {
-    bottom: 8px;
-  }
-}
-@media (min-width: 901px) and (max-width: 1200px) {
-  .identity-meta {
-    font-size: 4px;
-  }
-  .side-screen-footer {
-    font-size: 4px;
-  }
-  .side-screen .micro-label {
-    font-size: 4px;
-  }
-  .module-link {
-    font-size: 6px;
-  }
-  .side-screen h2 {
-    font-size: 16px;
-  }
-  .welcome-screen > p {
-    font-size: 7px;
-  }
-  .suggestion {
-    font-size: 6px;
-  }
-  .welcome-screen h1 {
-    font-size: 26px;
-  }
-  .terminal-eyebrow {
-    font-size: 4.5px;
-  }
-  .screen-topline {
-    font-size: 5px;
-  }
-  .screen-bottomline {
-    font-size: 4px;
-  }
-  .welcome-greeting {
-    font-size: 7px;
-  }
-}
-@media (min-width: 1700px) {
-  .system-hud {
-    height: 98px;
-  }
-  .scene-heading {
-    height: 82px;
-  }
-  .crt-glass {
-    height: 420px;
-  }
-  .key {
-    height: 27px;
-  }
-  .keyboard-topline {
-    height: 26px;
-  }
-  .keyboard-bottomline {
-    height: 22px;
-  }
-  .welcome-screen h1 {
-    font-size: 42px;
-    margin-bottom: 8px;
-  }
-  .welcome-screen > p {
-    font-size: 10px;
-    line-height: 1.8;
-    margin-bottom: 14px;
-  }
-  .suggestion {
-    font-size: 9px;
-    min-height: 31px;
-  }
-  .welcome-greeting {
-    font-size: 10px;
-    margin: 10px 0;
-  }
-  .conversation-panel {
-    padding-top: 24px;
-  }
-}
-@media (max-width: 767px) {
-  .crt-glass {
-    height: clamp(425px, 54svh, 580px);
-  }
-  .welcome-screen h1 {
-    font-size: 30px;
-  }
-  .welcome-screen > p {
-    font-size: 7px;
-    margin-bottom: 10px;
-  }
-  .welcome-greeting {
-    font-size: 8px;
-  }
-  .suggestion {
-    font-size: 7px;
-  }
-  .avatar-region {
-    height: 145px;
-    flex-basis: 145px;
-  }
-  .avatar-name h2 {
-    font-size: 19px;
-  }
-  .terminal-eyebrow {
-    font-size: 5px;
-  }
-  .screen-topline {
-    font-size: 5px;
-  }
-  .avatar-disclosure {
-    font-size: 4px;
-    line-height: 1.6;
-    max-width: 125px;
-    bottom: 12px;
-  }
-  .avatar-state {
-    font-size: 5px;
-  }
-  .room-footer {
-    margin-top: 20px;
-  }
-  .conversation-panel {
-    padding-top: 10px;
-  }
-  .system-hud {
-    height: 71px;
-  }
-  .scene-heading {
-    height: 53px;
-  }
-}
-@media (max-width: 359px) {
-  .system-hud {
-    height: 65px;
-  }
-  .scene-heading {
-    height: 48px;
-  }
-  .crt-glass {
-    height: 421px;
-  }
-  .avatar-region {
-    height: 124px;
-    flex-basis: 124px;
-  }
-  .welcome-screen h1 {
-    font-size: 28px;
-  }
-  .welcome-screen > p {
-    font-size: 6px;
-  }
-  .welcome-greeting {
-    font-size: 7px;
-  }
-  .suggestion {
-    font-size: 6px;
-  }
-  .terminal-eyebrow {
-    font-size: 4.5px;
-  }
-  .screen-topline {
-    font-size: 4px;
-  }
-  .avatar-name h2 {
-    font-size: 16px;
-  }
-  .avatar-name {
-    bottom: 50px;
-  }
-  .avatar-state {
-    bottom: 30px;
-    font-size: 4px;
-  }
-  .avatar-disclosure {
-    font-size: 3px;
-  }
-  .room-footer {
-    font-size: 4px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   *,
-  *:before,
-  *:after {
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
   }
   .key.is-pressed {
     transform: translateY(2px);
-  }
-  .crt-scanlines {
-    opacity: 0.35;
   }
 }
