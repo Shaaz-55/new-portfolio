@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 import ConversationPanel from "../conversation/ConversationPanel.jsx";
 import BootSequence from "../hologram/BootSequence.jsx";
 
-const DigitalAvatar = lazy(() => import("../avatar/DigitalAvatar.jsx"));
+const Avatar3D = lazy(() => import("../Avatar3D.jsx"));
 
 // Original physical monitor construction, with the current voice/conversation wiring.
 export default function CRTMonitor({
@@ -41,7 +41,7 @@ export default function CRTMonitor({
                 </div>
               }
             >
-              <DigitalAvatar
+              <Avatar3D
                 state={state}
                 reducedMotion={reducedMotion}
                 recording={recording}

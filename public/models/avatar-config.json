@@ -1,11 +1,11 @@
 {
-  "modelUrl": "/models/portrait-study.glb",
-  "kind": "portrait-geometry",
+  "modelUrl": null,
+  "kind": "procedural",
   "height": 3.4,
   "offsetY": 0,
   "rotationY": 0,
-  "cameraPosition": [0, 1.95, 7.1],
-  "cameraTarget": [0, 1.85, 0],
+  "cameraPosition": [0, 2.16, 6.8],
+  "cameraTarget": [0, 2.06, 0],
   "animations": {
     "idle": "Idle",
     "listening": "Listening",
@@ -13,5 +13,5 @@
     "speaking": "Speaking"
   },
   "morphs": { "mouth": "jawOpen" },
-  "note": "Temporary illustrative male character. To replace it, set modelUrl to your GLB and kind to custom. Framing, clip names and mouth morph are configurable here."
+  "note": "Default: original procedural portrait studied from the supplied turntable. No GLB is loaded. For a future model, set modelUrl and kind to custom; camera and animation mappings apply to that optional model."
 }
