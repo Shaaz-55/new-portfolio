@@ -2,6 +2,8 @@ import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { verifyVoice } from "./verify-voice.mjs";
+import { verifyShowcase } from "./verify-showcase.mjs";
+import { verifyPortfolio } from "./verify-portfolio.mjs";
 
 const artifacts = new URL("../artifacts/", import.meta.url);
 const appUrl =
@@ -45,7 +47,9 @@ if (process.argv.includes("--showcase")) {
   try {
     const { verifyShowcase } = await import("./verify-showcase.mjs");
     await verifyShowcase({ browser, appUrl, artifacts });
-  } finally { await browser.close(); }
+  } finally {
+    await browser.close();
+  }
   process.exit(0);
 }
 try {
@@ -201,9 +205,12 @@ try {
     });
     await check("Virtual backspace preserves pasted Unicode text", async () => {
       // Let the preceding virtual key finish restoring its caret before replacing the draft.
-      await input.evaluate(() => new Promise(resolve =>
-        requestAnimationFrame(() => requestAnimationFrame(resolve)),
-      ));
+      await input.evaluate(
+        () =>
+          new Promise((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(resolve)),
+          ),
+      );
       await input.fill("Hello 👩🏽‍💻");
       assert.equal(await input.inputValue(), "Hello 👩🏽‍💻");
       await input.evaluate((element) =>
@@ -215,7 +222,7 @@ try {
     await check(
       "Physical enter, thinking and silent local answer",
       async () => {
-        await input.fill("Tell me about SafeSteps");
+        await input.fill("Tell me about Sehat");
         await page.keyboard.press("Enter");
         assert.equal(
           await page
@@ -238,7 +245,7 @@ try {
         );
         assert.match(
           await page.locator(".message-shaaz").last().innerText(),
-          /visually impaired/,
+          /Sehat.*frontend learning project/,
         );
         assert.equal(await input.inputValue(), "");
       },
@@ -481,6 +488,11 @@ try {
       artifacts,
       consoleErrors,
     });
+    await check(
+      "Project screenshots, lightbox, MP3 playback and audio failures",
+      () => verifyShowcase({ browser, appUrl, artifacts }),
+    );
+    await verifyPortfolio({ browser, check, appUrl, artifacts, consoleErrors });
     await check("No browser console errors", async () =>
       assert.deepEqual(consoleErrors, []),
     );

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { suggestedQuestions } from "../../data/portfolioData.js";
 import Icon from "../Icon.jsx";
 import ProjectShowcase from "../ProjectShowcase.jsx";
+import QuestionDirectory from "./QuestionDirectory.jsx";
 
 export default function ConversationPanel({
   conversation,
@@ -13,13 +14,33 @@ export default function ConversationPanel({
   const { messages, phase, error, announcement } = conversation;
   const scrollRef = useRef(null);
   const followRef = useRef(true);
+  const questionRef = useRef(null);
+  const richAnswerRef = useRef(null);
   useEffect(() => {
-    if (scrollRef.current && followRef.current)
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    const questionId = messages
+      .filter((message) => message.role === "visitor")
+      .at(-1)?.id;
+    if (questionRef.current !== questionId) {
+      questionRef.current = questionId;
+      followRef.current = true;
+      richAnswerRef.current = null;
+    }
+    const scroll = scrollRef.current;
+    if (!scroll || !followRef.current) return;
+    const latest = messages.at(-1);
+    if (latest?.complete && latest.projects?.length) {
+      if (richAnswerRef.current !== latest.id) {
+        const article = scroll.querySelector(
+          `[data-message-id="${latest.id}"]`,
+        );
+        if (article)
+          scroll.scrollTop +=
+            article.getBoundingClientRect().top -
+            scroll.getBoundingClientRect().top;
+        richAnswerRef.current = latest.id;
+      }
+    } else scroll.scrollTop = scroll.scrollHeight;
   }, [messages, phase]);
-  useEffect(() => {
-    followRef.current = true;
-  }, [messages.filter((message) => message.role === "visitor").length]);
   return (
     <section
       className={`conversation-panel ${messages.length ? "has-conversation" : ""}`}
@@ -77,6 +98,7 @@ export default function ConversationPanel({
             {messages.map((message) => (
               <article
                 key={message.id}
+                data-message-id={message.id}
                 className={`message message-${message.role}`}
               >
                 <div className="message-meta">
@@ -89,17 +111,29 @@ export default function ConversationPanel({
                       <span className="blinking-cursor">▌</span>
                     )}
                 </p>
-                {message.complete && message.projects?.map((project) => (
-                  <ProjectShowcase key={project.id} project={project} />
-                ))}
+                {message.complete && message.projects?.length > 0 && (
+                  <div
+                    className={
+                      message.projects.length > 1
+                        ? "project-collection"
+                        : "project-results"
+                    }
+                    aria-label="Project results"
+                  >
+                    {message.projects.map((project) => (
+                      <ProjectShowcase key={project.id} project={project} />
+                    ))}
+                  </div>
+                )}
                 {message.complete && message.links?.length > 0 && (
                   <div className="response-links">
                     {message.links.map((link) => (
                       <a
-                        key={link.href}
+                        key={`${link.href}-${link.label}`}
                         href={link.href}
-                        target="_blank"
+                        target={link.download ? undefined : "_blank"}
                         rel="noopener noreferrer"
+                        download={link.download}
                       >
                         {link.label} <Icon name="arrow" size={14} />
                       </a>
@@ -165,6 +199,10 @@ export default function ConversationPanel({
           </div>
         </>
       )}
+      <QuestionDirectory
+        onQuestion={onQuestion}
+        disabled={inputActive || phase !== "idle"}
+      />
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {announcement}
       </span>

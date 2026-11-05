@@ -37,19 +37,34 @@ export default function SidePanels({ onQuestion, disabled }) {
       >
         <div className="side-hardware-label">ARCHIVE DIRECTORY</div>
         <nav className="side-screen" aria-label="Portfolio archive">
-          {archiveSections.map((section) => (
-            <button
-              key={section.id}
-              className="module-link"
-              onClick={() => onQuestion(section.question)}
-              disabled={disabled}
-            >
-              <span>
-                {section.id === "leadership" ? "Leadership" : section.label}
-              </span>
-              <Icon name="arrow" size={14} />
-            </button>
-          ))}
+          {archiveSections.map((section) =>
+            section.href ? (
+              <a
+                key={section.id}
+                className="module-link"
+                href={section.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Resume (PDF, opens in a new tab)"
+              >
+                <span>{section.label}</span>
+                <Icon name="arrow" size={14} />
+              </a>
+            ) : (
+              <button
+                key={section.id}
+                type="button"
+                className="module-link"
+                onClick={() => onQuestion(section.question)}
+                disabled={disabled}
+              >
+                <span>
+                  {section.id === "leadership" ? "Leadership" : section.label}
+                </span>
+                <Icon name="arrow" size={14} />
+              </button>
+            ),
+          )}
         </nav>
         <div className="side-hardware-bottom" aria-hidden="true">
           <span className="hardware-knob" />

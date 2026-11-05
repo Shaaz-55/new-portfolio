@@ -8,7 +8,8 @@ export function createFishAudioSynthesis(scope = globalThis) {
     scope.Audio &&
     scope.Blob &&
     scope.AbortController &&
-    scope.URL?.createObjectURL,
+    scope.URL?.createObjectURL &&
+    scope.URL?.revokeObjectURL,
   );
   return {
     supported,
@@ -24,6 +25,7 @@ export function createFishAudioSynthesis(scope = globalThis) {
       let objectUrl;
       let started = false;
       const stop = () => {
+        if (!active) return;
         active = false;
         controller.abort();
         if (audio) {
@@ -56,7 +58,9 @@ export function createFishAudioSynthesis(scope = globalThis) {
           if (!active) return;
           if (!response.ok)
             throw new Error(
-              "Cloned voice is unavailable. Please try again; the full answer is still available as text.",
+              response.status === 429
+                ? "Cloned voice is busy. Please try again shortly; the full answer is still available as text."
+                : "Cloned voice is unavailable. Please try again; the full answer is still available as text.",
             );
           if (
             !/^audio\/mpeg\b/i.test(response.headers.get("content-type") || "")
@@ -83,7 +87,9 @@ export function createFishAudioSynthesis(scope = globalThis) {
               new Error(
                 error.name === "NotAllowedError"
                   ? "Your browser blocked audio. Tap Listen to response to retry; the full answer is still available as text."
-                  : error.message || PLAYBACK_ERROR,
+                  : error.name === "TypeError"
+                    ? "Cloned voice could not be loaded. Please try again; the full answer is still available as text."
+                    : error.message || PLAYBACK_ERROR,
               ),
             );
         }

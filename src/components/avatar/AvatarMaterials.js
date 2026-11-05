@@ -11,7 +11,7 @@ export function createAvatarMaterials() {
     hair: new THREE.MeshStandardMaterial({ color: "#242124", roughness: 0.91 }),
     hairRidge: new THREE.MeshStandardMaterial({ color: "#2b272c", roughness: 0.93 }),
     hairFine: new THREE.MeshStandardMaterial({ color: "#302c30", roughness: 0.95 }),
-    beard: new THREE.MeshStandardMaterial({ color: "#382a26", roughness: 1, side: THREE.DoubleSide }),
+    beard: new THREE.MeshStandardMaterial({ color: "#48474a", roughness: 1, side: THREE.DoubleSide }),
     sclera: new THREE.MeshStandardMaterial({ color: "#d4c6b6", roughness: 0.4 }),
     iris: new THREE.MeshPhysicalMaterial({ color: "#473728", roughness: 0.38, clearcoat: 0.65 }),
     pupil: new THREE.MeshPhysicalMaterial({ color: "#141210", roughness: 0.2, clearcoat: 1 }),

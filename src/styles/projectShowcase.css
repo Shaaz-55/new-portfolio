@@ -1,3 +1,13 @@
+.project-collection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 12px;
+  margin: 16px 0;
+  align-items: start;
+}
+.project-collection .project-showcase {
+  margin: 0;
+}
 .project-showcase {
   margin: 16px 0;
   padding: 12px;
@@ -41,7 +51,7 @@
 }
 .project-thumbnails {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--gallery-count, 5), minmax(0, 1fr));
   gap: 6px;
   margin-top: 8px;
 }
@@ -96,8 +106,16 @@
   color: #c3d7b6;
 }
 .project-links a {
-  min-height: 36px;
+  min-height: 44px;
   align-content: center;
+}
+.project-links {
+  align-items: center;
+}
+.message .project-detail-note {
+  margin: 8px 0;
+  color: #aabf9d;
+  font: 10px/1.6 var(--mono);
 }
 .project-lightbox {
   width: min(1100px, 94vw);

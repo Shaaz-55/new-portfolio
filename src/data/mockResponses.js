@@ -11,7 +11,7 @@ export function wasteMetrics() {
 }
 
 export function projectOverview(item) {
-  if (item.id !== "waste") return item.overview;
+  if (item.id !== "waste") return item.overview || item.description;
   return `I built an AI-based household waste classifier to identify recyclable materials. ${wasteMetrics()}\n\nI used a two-stage training pipeline, stratified and duplicate-aware splitting, class weighting, and augmentation. I also built a Python CLI with structured JSON outputs, confidence-threshold analysis, and uncertainty handling.`;
 }
 
@@ -46,8 +46,8 @@ export const mockResponses = {
   identity: () => p.identity.introduction,
   education,
   interests: () => `I'm interested in ${p.interests.join(", ").toLowerCase()}. I enjoy connecting these areas through working prototypes, especially where technology can solve an everyday problem.`,
-  projects: () => `My projects span web development, AI, accessibility, and robotics:\n\n${p.projects.map((item) => `${item.name}${item.date ? " · " + item.date : ""}\n${item.description}`).join("\n\n")}\n\nAsk about one and I can explain the implementation, my contribution, or possible next steps.`,
-  featured: () => `A strong technical example to explore is ${waste.name}. ${projectOverview(waste)}`,
+  projects: () => `My projects span web development, AI, and robotics. Explore the collection below, or ask about a project's implementation, my contribution, or possible next steps.`,
+  featured: () => `I haven't recorded a single favourite. A strong technical example to explore is ${waste.name}. ${projectOverview(waste)}`,
   skills: () => `${Object.values(p.skills).map((group) => `${group.label}: ${group.items.join(", ")}`).join("\n\n")}\n\n${p.skillProficiency}`,
   languages: () => `I've used or explored ${skillList("languages")}. Python connects to my model-training and logistics work; JavaScript, HTML, and CSS appear across my web projects. ${p.skillProficiency}`,
   web: () => `My web-development toolkit includes ${skillList("web")}. UniBuddy is a concrete React example with reusable components and shared contexts. My experience varies by tool; I haven't supplied a separate Node.js or Express project breakdown.`,
@@ -75,10 +75,25 @@ export const mockResponses = {
   problemSolving: () => p.proposals.problemSolving,
   debugging: () => p.proposals.debugging,
   technologyChoice: () => p.proposals.technologyChoice,
+  testing: () => p.proposals.testing,
+  teamwork: () => {
+    const event = p.activities.find((item) => item.id === "vibeathon");
+    return `At ${event.name}, organised by ${event.organiser} in ${event.date}, I worked with a team on a web app for smoother multi-leg travel planning during a 48-hour event. I've also led cross-functional teams in hackathons. I haven't documented a detailed account of the task allocation or team decisions for that event.`;
+  },
+  deadlines: () => p.proposals.deadlines,
+  initiative: () => `I haven't documented a specific example of acting without being asked. One example of ownership I can discuss is my initial AAYAM Techfest website: I built its layout, interface, content structure, and Firebase integration. The official fest team built the subsequent production version.`,
+  feedback: () => p.proposals.feedback,
+  ideaToProduct: () => p.proposals.ideaToProduct,
+  prioritisation: () => p.proposals.prioritisation,
+  productImprovement: () => p.proposals.productImprovement,
+  projectImprovement: () => p.projects.find((item) => item.id === "unibuddy").future,
+  requirements: () => p.proposals.requirements,
+  solutionFailure: () => p.proposals.solutionFailure,
+  roleInterest: () => `I'm interested in roles where I can build useful products and deepen my engineering skills. My projects span web development, AI, and robotics, and my long-term ambition is to build a technology company. I don't have this role's description in the archive, so I can't give a company-specific reason yet.`,
   learningApproach: () => p.proposals.learning,
   disagreement: () => p.proposals.disagreement,
   challenge: () => `A technically demanding example is the waste classifier. ${waste.challenge}`,
-  selection: () => `I'd bring a mix of practical building, curiosity, and ownership. My work spans reusable web interfaces, a carefully evaluated ML model, browser-to-robot communication, and product design. I've also coordinated technical events and led hackathon teams.\n\nI'd contribute by understanding the problem, making a prototype, and improving it with feedback. For this opportunity, I'd like to bring that product-building approach to useful voice-first experiences; I won't promise outcomes I haven't demonstrated.`,
+  selection: () => `I'd bring practical building experience across React interfaces, a carefully evaluated ML model, browser-to-robot communication, and freelance product design. I've also coordinated technical events and led hackathon teams. I'd contribute by understanding the problem, building a useful prototype, and improving it with feedback while continuing to deepen my engineering skills.`,
   wisprGrowth: () => p.proposals.wisprGrowth,
   budget: () => p.proposals.budget,
   voice: () => p.proposals.voice,
@@ -86,6 +101,7 @@ export const mockResponses = {
   github: () => "Here's my GitHub profile, where you can explore my code.",
   linkedin: () => "You can connect with me on LinkedIn through the link below.",
   email: () => "You can email me using the link below.",
+  resume: () => "You can open my resume in a new tab or download the PDF using the links below.",
   unavailable: () => "I haven't supplied that information in this personal archive, so I won't invent it. I can explain my documented projects, education, freelance design work, leadership, and interests.",
   wisprHistory: () => "I haven't supplied any executed Wispr Flow campaign, partnership, or acquisition results. The growth and ₹3,000-budget answers here are proposed experiments. You can ask how I'd approach one.",
   acknowledgement: () => "You're welcome. Ask about a project, my education, freelance work, or what I want to build next.",
@@ -97,6 +113,18 @@ export const intentRules = [
   { id: "budget", patterns: [/\b(3000|3 000|budget|rupees)\b/] },
   { id: "wisprGrowth", patterns: [/\bwispr\b.*\b(grow|growth|india|market|promot|campaign|help|adoption)\w*/, /\b(grow|growth|market|promote)\w*.*\bwispr\b/] },
   { id: "voice", patterns: [/\bwispr\b/, /\b(voice first|voice typing|voice technology|voice products)\b/] },
+  { id: "roleInterest", patterns: [/\bwhy\b.*\b(interested|interest|want)\b.*\b(role|position|job|company|work here)\b/] },
+  { id: "solutionFailure", patterns: [/\b(what would|what will|how would)\b.*\b(solution|approach|attempt)\b.*\b(fail\w*|didnt work|doesnt work)\b/] },
+  { id: "ideaToProduct", patterns: [/\b(turn|take|transform|convert)\b.*\bidea\b.*\b(product|prototype|working)\b/, /\bidea to (product|prototype)\b/] },
+  { id: "prioritisation", patterns: [/\b(prioritis\w*|prioritiz\w*)\b.*\b(features?|build|product)\b/, /\b(which|what) features\b.*\b(first|build|priorit\w*)\b/] },
+  { id: "requirements", patterns: [/\b(understand|gather|discover|clarify)\b.*\b(requirements?|user needs|users needs)\b/] },
+  { id: "projectImprovement", patterns: [/\bimprove\b.*\b(one of|existing|your)\b.*\bprojects?\b/] },
+  { id: "productImprovement", patterns: [/\bimprove\b.*\b(existing|a|your) product\b/] },
+  { id: "testing", patterns: [/\b(test|testing|validate)\b.*\b(applications?|apps?|code|websites?|projects?)\b/] },
+  { id: "teamwork", patterns: [/\b(teamwork|team work)\b/, /\b(time|example|experience)\b.*\b(worked|working|collaborat\w*)\b.*\bteam\b/] },
+  { id: "deadlines", patterns: [/\b(deadlines?|time management|manage your time)\b/] },
+  { id: "initiative", patterns: [/\b(initiative|without being asked)\b/] },
+  { id: "feedback", patterns: [/\b(constructive criticism|feedback|criticism)\b/] },
   { id: "disagreement", patterns: [/\b(disagreements?|conflicts?)\b.*\b(handle|team|resolve|deal)\b/, /\b(handle|resolve|deal)\b.*\b(disagreements?|conflicts?)\b/] },
   { id: "technologyChoice", patterns: [/\b(choose|decide|pick|select)\b.*\b(technology|technologies|stack|framework|tools?)\b/] },
   { id: "debugging", patterns: [/\b(debug|debugging|troubleshoot)\b/, /\b(doesnt|does not|isnt|is not) work\b/] },
@@ -104,7 +132,8 @@ export const intentRules = [
   { id: "problemSolving", patterns: [/\b(approach|solve|tackle|break down)\b.*\b(unfamiliar|complex|problem)\w*/, /\bunfamiliar problem\b/] },
   { id: "weakness", patterns: [/\b(weakness|weaknesses)\b/, /\bimprove\b.*\b(yourself|about you)\b/] },
   { id: "failure", patterns: [/\b(failure|failed|mistake|setback)\b/] },
-  { id: "unavailable", patterns: [/\b(phone|salary|earnings|clients names|client names|internship|internships|awards?|medals?|won|winner|winning|revenue|user count|users have)\b/, /\b(resume|cv)\b/] },
+  { id: "resume", patterns: [/\b(resume|cv)\b/] },
+  { id: "unavailable", patterns: [/\b(phone|salary|earnings|clients names|client names|internship|internships|awards?|medals?|won|winner|winning|revenue|user count|users have)\b/] },
   { id: "email", patterns: [/\b(email|e mail)\b/] },
   { id: "github", patterns: [/\bgithub\b/] },
   { id: "linkedin", patterns: [/\blinked ?in\b/] },

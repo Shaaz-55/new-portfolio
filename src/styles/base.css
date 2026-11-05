@@ -227,7 +227,7 @@ textarea:focus-visible,
 }
 .control-room {
   position: relative;
-  width: 94%;
+  width: 96%;
   max-width: 1680px;
   margin: 0 auto;
   padding: 16px 0;
@@ -244,9 +244,9 @@ textarea:focus-visible,
 .station {
   position: relative;
   margin: 0 auto;
-  max-width: 1450px;
+  max-width: 1500px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 5.8fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.14fr) minmax(0, 5.8fr) minmax(0, 1.14fr);
   grid-template-areas: "identity monitor archive" ". input .";
   column-gap: 14px;
   align-items: start;

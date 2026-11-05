@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
 
-// Replace the old local key before running. No credentials are read or printed here.
+// Uses the configured server credentials. No credentials are read or printed here.
 const base = process.argv[2] || "http://127.0.0.1:5173";
 const response = await fetch(new URL("/api/tts", base), {
   method: "POST",

@@ -116,7 +116,7 @@ export function createProceduralAvatar() {
   const body = new THREE.Group(); body.position.y = 0.18; root.add(body);
   const headPivot = new THREE.Group(); headPivot.position.y = 1.89; root.add(headPivot);
   const head = new THREE.Group(); head.position.y = -1.89; headPivot.add(head);
-  const skin = new THREE.Color("#c99573"), beard = new THREE.Color("#49332c"), blush = new THREE.Color("#bd8066");
+  const skin = new THREE.Color("#c99573"), beard = new THREE.Color("#535053"), blush = new THREE.Color("#bd8066");
   const face = addMesh(head, surface(128,128,(u,v) => {
     const y = 1.94 + v * 1.37, angle = u * TAU;
     const [rx,rz] = profileAt(faceProfile,y);

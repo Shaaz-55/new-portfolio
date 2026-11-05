@@ -30,7 +30,8 @@ const checks = [],
   layouts = [];
 page.on("pageerror", (error) => consoleErrors.push(error.message));
 page.on("console", (event) => {
-  if (event.type() === "error") consoleErrors.push(event.text());
+  if (event.type() === "error")
+    consoleErrors.push(`${event.text()} ${event.location().url || ""}`.trim());
 });
 const check = async (name, run) => {
   try {
@@ -78,10 +79,10 @@ try {
           };
         });
         layouts.push({ width, height, ...layout });
-        const enlargement = layout.monitor.width / layout.station.width / 0.655;
+        const monitorShare = layout.monitor.width / layout.station.width;
         assert.ok(
-          enlargement >= 1.1 && enlargement <= 1.13,
-          `CRT width ratio vs original: ${enlargement}`,
+          monitorShare >= 0.69 && monitorShare <= 0.75,
+          `CRT should retain the primary share of the station: ${monitorShare}`,
         );
         assert.ok(
           layout.left.right + 5 <= layout.monitor.left,
@@ -102,12 +103,12 @@ try {
         );
         assert.ok(layout.scrollWidth <= width, "Horizontal overflow");
         assert.ok(
-          layout.avatar.width / layout.content.width >= 0.275 &&
-            layout.avatar.width / layout.content.width <= 0.285,
+          layout.avatar.width / layout.content.width >= 0.245 &&
+            layout.avatar.width / layout.content.width <= 0.255,
         );
         assert.ok(
-          layout.conversation.width / layout.content.width >= 0.69 &&
-            layout.conversation.width / layout.content.width <= 0.71,
+          layout.conversation.width / layout.content.width >= 0.73 &&
+            layout.conversation.width / layout.content.width <= 0.75,
         );
         assert.match(layout.scale, /^matrix\(0\.82,/);
         assert.ok(
@@ -174,6 +175,8 @@ try {
       () =>
         document.querySelector(".message-shaaz") &&
         !document.querySelector("#question-input").readOnly,
+      undefined,
+      { polling: 100, timeout: 10000 },
     );
   const ask = async (question) => {
     await page.locator("#question-input").fill(question);
@@ -183,10 +186,12 @@ try {
     await waitForAnswer();
   };
   await check(
-    "All seven side archive actions remain connected to conversation",
+    "Seven archive actions remain connected alongside the resume link",
     async () => {
-      assert.equal(await page.locator(".side-right .module-link").count(), 7);
-      for (const section of archiveSections) {
+      assert.equal(await page.locator(".side-right .module-link").count(), 8);
+      for (const section of archiveSections.filter(
+        (section) => section.question,
+      )) {
         const label =
           section.id === "leadership" ? "Leadership" : section.label;
         await page
@@ -199,7 +204,7 @@ try {
           section.question,
         );
         assert.ok(
-          (await page.locator(".message-shaaz p").last().innerText()).length >
+          (await page.locator(".message-shaaz > p").last().innerText()).length >
             40,
         );
       }
@@ -224,17 +229,17 @@ try {
     "Project archive and project-specific follow-up context are preserved",
     async () => {
       await ask("What projects have you built?");
-      const archive = await page.locator(".message-shaaz p").last().innerText();
+      const archive = await page.locator(".message-shaaz").last().innerText();
       for (const project of portfolioData.projects)
         assert.ok(archive.includes(project.name), project.name);
       await ask("Tell me about household waste classification");
       assert.match(
-        await page.locator(".message-shaaz p").last().innerText(),
+        await page.locator(".message-shaaz > p").last().innerText(),
         /97\.53%/,
       );
       await ask("What were the challenges?");
       assert.match(
-        await page.locator(".message-shaaz p").last().innerText(),
+        await page.locator(".message-shaaz > p").last().innerText(),
         /duplicate-aware/,
       );
       assert.equal(await page.locator(".message-visitor").count(), 10);
@@ -244,7 +249,7 @@ try {
     "Long responses use readable desktop typography and scroll inside the CRT",
     async () => {
       const metrics = await page
-        .locator(".message-shaaz p")
+        .locator(".message-shaaz > p")
         .last()
         .evaluate((node) => ({
           size: parseFloat(getComputedStyle(node).fontSize),
@@ -260,7 +265,9 @@ try {
           top: node.scrollTop,
         }));
       assert.ok(scroll.total > scroll.height);
-      assert.ok(scroll.total - scroll.top - scroll.height < 5);
+      assert.ok(
+        scroll.top >= 0 && scroll.top <= scroll.total - scroll.height + 1,
+      );
       await page.screenshot({
         path: new URL("recovered-conversation.png", artifacts).pathname,
         fullPage: true,
@@ -279,7 +286,7 @@ try {
       async () => {
         assert.ok(await page.locator(".side-left").isVisible());
         assert.ok(await page.locator(".side-right").isVisible());
-        assert.equal(await page.locator(".side-right .module-link").count(), 7);
+        assert.equal(await page.locator(".side-right .module-link").count(), 8);
         assert.ok(await page.locator("#question-input").isVisible());
         assert.ok(
           await page

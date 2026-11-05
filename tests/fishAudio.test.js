@@ -89,6 +89,7 @@ test("Fish errors, network failures, and non-audio responses never expose provid
 function playerFixture(
   fetchImpl = async () =>
     new Response(mp3, { headers: { "content-type": "audio/mpeg" } }),
+  { playError } = {},
 ) {
   const calls = [];
   let audio;
@@ -111,6 +112,7 @@ function playerFixture(
         calls.push(["audio", url]);
       }
       play() {
+        if (playError) return Promise.reject(playError);
         this.onplaying();
         return Promise.resolve();
       }
@@ -179,6 +181,87 @@ test("Fish failures leave a text-friendly error and no audio instance", async ()
     assert.equal(player.audio, undefined);
   }
 });
+test("Stopping or replacing audio releases it once and ignores late media events", async () => {
+  const player = playerFixture();
+  const events = [];
+  const first = player.service.speak("First answer", {
+    onEnd: () => events.push("end"),
+    onError: () => events.push("error"),
+  });
+  await settle();
+  const staleEnd = player.audio.onended;
+  player.service.speak("Second answer");
+  await settle();
+  assert.equal(player.calls.filter((call) => call[0] === "revoke").length, 1);
+  staleEnd();
+  first.stop();
+  assert.deepEqual(events, []);
+  assert.equal(player.calls.filter((call) => call[0] === "revoke").length, 1);
+  player.audio.onended();
+  assert.equal(player.calls.filter((call) => call[0] === "revoke").length, 2);
+});
+test("Autoplay rejection and network failure return useful errors without native speech", async () => {
+  const blocked = playerFixture(undefined, {
+    playError: new DOMException("Blocked", "NotAllowedError"),
+  });
+  let error;
+  blocked.service.speak("Visible answer", {
+    onError: (value) => {
+      error = value;
+    },
+  });
+  await settle();
+  assert.match(error.message, /Tap Listen to response to retry/);
+  assert.ok(blocked.calls.some((call) => call[0] === "revoke"));
+  const network = playerFixture(async () => {
+    throw new TypeError("Network details");
+  });
+  network.service.speak("Visible answer", {
+    onError: (value) => {
+      error = value;
+    },
+  });
+  await settle();
+  assert.match(error.message, /full answer.*text/);
+  assert.doesNotMatch(error.message, /Network details/);
+  assert.equal(network.audio, undefined);
+});
+test("Vite request streams are parsed and oversized or malformed bodies are rejected", async () => {
+  for (const [body, status] of [
+    [JSON.stringify({ text: "A streamed request" }), 200],
+    ["{", 400],
+    ["x".repeat(32769), 413],
+  ]) {
+    const res = await request({
+      req: {
+        body: undefined,
+        async *[Symbol.asyncIterator]() {
+          yield Buffer.from(body);
+        },
+      },
+    });
+    assert.equal(res.statusCode, status);
+  }
+});
+test("Fish timeouts fail with JSON and cancel the upstream request", async (context) => {
+  context.mock.timers.enable({ apis: ["setTimeout"] });
+  let aborted = false;
+  const pending = request({
+    fetchImpl: (url, { signal }) =>
+      new Promise((resolve, reject) => {
+        signal.addEventListener("abort", () => {
+          aborted = true;
+          reject(new DOMException("Timed out", "AbortError"));
+        });
+      }),
+  });
+  context.mock.timers.tick(45000);
+  const res = await pending;
+  assert.equal(aborted, true);
+  assert.equal(res.statusCode, 504);
+  assert.equal(res.headers["Content-Type"], "application/json");
+  assert.match(res.body, /timed out/);
+});
 test("UniBuddy questions carry all five real screenshots and the requested selection", () => {
   const questions = [
     ["Tell me about UniBuddy.", "cover"],
@@ -198,8 +281,8 @@ test("UniBuddy questions carry all five real screenshots and the requested selec
     assert.doesNotMatch(answer.content, /\/assets\//);
   }
   const all = findResponse("Show me all my projects.");
-  assert.equal(all.projects.length, 1);
-  assert.match(all.content, /LogiSense/);
+  assert.equal(all.projects.length, portfolioData.projects.length);
+  assert.ok(all.projects.some((project) => project.id === "logisense"));
   const project = portfolioData.projects.find(
     (project) => project.id === "unibuddy",
   );

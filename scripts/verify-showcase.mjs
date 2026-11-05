@@ -35,7 +35,10 @@ export async function verifyShowcase({ browser, appUrl, artifacts }) {
     await page.waitForFunction(
       () => !document.querySelector("#question-input").readOnly,
     );
-    const card = page.locator(".project-showcase").last();
+    const card = page
+      .locator(".message-shaaz")
+      .last()
+      .getByRole("region", { name: "UniBuddy project showcase", exact: true });
     assert.equal(await card.locator(".project-thumbnails img").count(), 5);
     await card
       .locator(".project-thumbnails img")
@@ -58,7 +61,10 @@ export async function verifyShowcase({ browser, appUrl, artifacts }) {
       `PASS ${question} — five decoded images, ${selected} selected, correct links`,
     );
   }
-  const card = page.locator(".project-showcase").last();
+  const card = page
+    .locator(".message-shaaz")
+    .last()
+    .getByRole("region", { name: "UniBuddy project showcase", exact: true });
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     await card
@@ -94,12 +100,25 @@ export async function verifyShowcase({ browser, appUrl, artifacts }) {
       .getByRole("button", { name: "Play response 6", exact: true })
       .click();
     await page.waitForFunction(() => window.playedMp3 > 0);
+    await page
+      .getByRole("button", { name: "Stop speaking", exact: true })
+      .click();
+    assert.equal(
+      await page
+        .getByRole("button", { name: "Stop speaking", exact: true })
+        .count(),
+      0,
+    );
+    await page
+      .getByRole("button", { name: "Play response 6", exact: true })
+      .click();
+    await page.waitForFunction(() => window.playedMp3 > 1);
     await page.waitForFunction(
       () => !document.querySelector('[aria-label="Stop speaking"]'),
     );
     assert.equal(await page.evaluate(() => window.nativeSpeechCalls), 0);
     console.log(
-      "PASS real MP3 fixture decoded and played in Chrome; zero native TTS calls (not a live Fish generation test)",
+      "PASS real MP3 fixture decoded, stopped, replayed and completed in Chrome; zero native TTS calls (not a live Fish generation test)",
     );
     await page.unroute("**/api/tts");
   }
