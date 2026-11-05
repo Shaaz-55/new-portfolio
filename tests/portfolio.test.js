@@ -91,7 +91,6 @@ test("Every retained project reaches the showcase, including projects without sc
     "unibuddy",
     "waste",
     "logisense",
-    "aayam",
     "sehat",
     "voice-controlled",
     "y-pay",
@@ -127,18 +126,21 @@ test("Every retained project reaches the showcase, including projects without sc
   );
   assert.doesNotMatch(
     JSON.stringify({
-      portfolioData,
+      portfolioData: {
+        ...portfolioData,
+        leadership: undefined,
+      },
       archiveSections,
       interviewCategories,
       collection,
     }),
-    /safesteps|safe steps|parsley/i,
+    /safesteps|safe steps|parsley|aayam fest|aayam techfest website/i,
   );
-  for (const removed of ["SafeSteps", "Parsley Clone"]) {
+  for (const removed of ["SafeSteps", "Parsley Clone", "AAYAM Fest", "AAYAM Techfest Website"]) {
     const answer = findResponse(`Tell me about ${removed}`);
     assert.equal(answer.topic, "fallback");
     assert.deepEqual(answer.projects, []);
-    assert.doesNotMatch(answer.content, /safesteps|parsley/i);
+    assert.doesNotMatch(answer.content, /safesteps|parsley|aayam/i);
   }
 });
 

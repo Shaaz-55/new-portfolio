@@ -53,7 +53,7 @@ export const mockResponses = {
   web: () => `My web-development toolkit includes ${skillList("web")}. UniBuddy is a concrete React example with reusable components and shared contexts. My experience varies by tool; I haven't supplied a separate Node.js or Express project breakdown.`,
   react: () => project("unibuddy").details.react,
   python: () => `I've used Python in the waste-classification workflow, including model training, evaluation, and a CLI with structured JSON output. Python and Flask are also part of LogiSense's documented stack. ${p.skillProficiency}`,
-  databases: () => `I've used or explored ${skillList("databases")}. A concrete example is Firebase integration in my initial AAYAM website for event registrations and participant data. I haven't supplied detailed production-scale database benchmarks.`,
+  databases: () => `I've used or explored ${skillList("databases")}. My experience varies across them; I haven't supplied detailed production-scale database benchmarks.`,
   ai: () => `I've explored ${skillList("ai")}. My most concrete model-training example here is the household waste classifier. ${wasteMetrics()}`,
   apis: () => `I've worked on API integration in LogiSense using ${project("logisense").technologies.filter((item) => ["OSRM", "AISStream", "OpenWeatherMap", "GDACS"].includes(item)).join(", ")}. My robot interface also integrates Google Translate API for voice input. OAuth 2.0 is among the concepts I've explored, with depth varying by area.`,
   tools: () => `I've used or explored ${skillList("tools")}. Fusion 360 is central to my freelance product modelling; Git and GitHub support my development workflow. I haven't supplied a production AWS architecture or infrastructure benchmark.`,
@@ -81,7 +81,7 @@ export const mockResponses = {
     return `At ${event.name}, organised by ${event.organiser} in ${event.date}, I worked with a team on a web app for smoother multi-leg travel planning during a 48-hour event. I've also led cross-functional teams in hackathons. I haven't documented a detailed account of the task allocation or team decisions for that event.`;
   },
   deadlines: () => p.proposals.deadlines,
-  initiative: () => `I haven't documented a specific example of acting without being asked. One example of ownership I can discuss is my initial AAYAM Techfest website: I built its layout, interface, content structure, and Firebase integration. The official fest team built the subsequent production version.`,
+  initiative: () => "I haven't documented a specific example of acting without being asked. When building projects, I focus on identifying practical needs and turning them into working prototypes, taking ownership of the implementation from concept to completion.",
   feedback: () => p.proposals.feedback,
   ideaToProduct: () => p.proposals.ideaToProduct,
   prioritisation: () => p.proposals.prioritisation,

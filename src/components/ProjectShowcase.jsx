@@ -79,30 +79,28 @@ export default function ProjectShowcase({ project }) {
           Technology stack not yet documented.
         </p>
       )}
-      <div className="response-links project-links">
-        {project.liveDemoUrl && (
-          <a
-            href={project.liveDemoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Live Demo ↗
-          </a>
-        )}
-        {project.githubUrl && (
-          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-            GitHub ↗
-          </a>
-        )}
-        {!project.liveDemoUrl && (
-          <span className="project-detail-note">
-            Live Demo not yet supplied
-          </span>
-        )}
-        {!project.githubUrl && (
-          <span className="project-detail-note">GitHub not yet supplied</span>
-        )}
-      </div>
+      {(project.liveDemoUrl || project.githubUrl) && (
+        <div className="response-links project-links">
+          {project.liveDemoUrl && (
+            <a
+              href={project.liveDemoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Live Demo ↗
+            </a>
+          )}
+          {project.githubUrl && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub Repository ↗
+            </a>
+          )}
+        </div>
+      )}
       {image && (
         <dialog
           ref={dialog}

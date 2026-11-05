@@ -56,7 +56,7 @@ export const portfolioData = {
     {
       id: "waste", name: "Household Waste Classification Using AI", category: "AI / Machine Learning / Computer Vision", date: "September 2026", status: "Evaluated model and command-line prediction tool; not production-deployed",
       liveDemoUrl: "", githubUrl: "https://github.com/Shaaz-55/amazon_environment_hackathon", images: [],
-      aliases: ["household waste", "waste classification", "waste classifier", "waste project", "waste ai", "waste model", "recycling classifier", "recycling project", "resnet", "resnet50", "resnet 50", "classification model", "ai classification", "ai project"],
+      aliases: ["household waste", "waste classification", "waste classifier", "waste project", "waste ai", "waste model", "recycling classifier", "recycling project", "resnet", "resnet50", "resnet 50", "classification model", "ai classification", "ai project", "amazon environment hackathon", "amazon hackathon", "environment hackathon"],
       description: "An image classification system for identifying recyclable household waste across 10 categories.",
       technologies: ["Python", "PyTorch", "ResNet50", "CNN", "ONNX", "Computer Vision"],
       metrics: { images: 15870, categories: 10, accuracy: "97.53%", top3Accuracy: "99.68%", averageLatencyMs: "12.04", hardware: "Apple M4 CPU", evaluation: "held-out test dataset" },
@@ -69,7 +69,7 @@ export const portfolioData = {
     },
     {
       id: "logisense", name: "LogiSense", category: "AI / Smart Supply Chain / Logistics", date: "April 2026", status: "Google Solution Challenge prototype",
-      liveDemoUrl: "", githubUrl: "", images: [],
+      liveDemoUrl: "", githubUrl: "https://github.com/Shaaz-55/LogiSense", images: [],
       pendingImages: ["/assets/projects/logisense/cover.webp"],
       aliases: ["logisense", "logi sense", "logistics project", "shipment tracking", "supply chain", "shipment intelligence"],
       description: "A smart supply-chain and shipment intelligence prototype for monitoring deliveries and evaluating possible delays.",
@@ -88,24 +88,10 @@ export const portfolioData = {
       },
     },
     {
-      id: "aayam", name: "AAYAM Techfest Website", category: "Frontend Development / Web Development", date: "February 2026", status: "Initial version; subsequent production version built by the official fest team",
-      liveDemoUrl: "", githubUrl: "", images: [],
-      aliases: ["aayam", "techfest website", "fest website"],
-      description: "The first version of the AAYAM Techfest website, intended for event registrations and participant data.",
-      overview: "I designed and developed the first version of the AAYAM Techfest website using HTML, CSS, JavaScript, and Firebase. My contribution covered the core layout, initial interface, visual identity, content architecture, and Firebase integration for the registration and participant-data use case.\n\nThat first version directly inspired the subsequent production website. The official fest team built the later React and Three.js version on that foundation; I don't take credit for their implementation.",
-      problem: "The fest needed a website for event registrations and participant information. My first version established the interface, visual identity, and content structure for that event context.",
-      technologies: ["HTML", "CSS", "JavaScript", "Firebase"],
-      implementation: ["Initial site structure and core layout", "Visual identity, interface, and content architecture", "Firebase integration for event registrations and participant data"],
-      contribution: "I built the initial website structure, layout, interface, visual identity, content architecture, and Firebase integration. The official fest team subsequently built the React and Three.js production version inspired by that foundation.",
-      challenge: "The design task was making event information and registration fit into one coherent interface. My contribution is the initial HTML, CSS, JavaScript, and Firebase version; I haven't supplied a production incident or performance benchmark.",
-      learning: "It was an opportunity to connect frontend design, content structure, and Firebase integration to a real event context—and to see an initial version inform a later team-built website.",
-      future: "For a future version, I'd propose usability testing of event discovery and registration, accessibility checks, and review of participant-data handling. These are recommendations, not changes already delivered by the official team.",
-    },
-    {
       id: "sehat", name: "Sehat", category: "Frontend Development / Healthcare", date: "January 2026", status: "Frontend learning project",
       aliases: ["sehat", "health website", "healthcare website", "healthcare project"],
       description: "A healthcare website learning project with consultation, lab appointment, medicine recommendation, and customer review interfaces.",
-      liveDemoUrl: "", githubUrl: "",
+      liveDemoUrl: "https://sehat-seven.vercel.app/", githubUrl: "https://github.com/Shaaz-55/sehat",
       images: [
         { id: "cover", label: "Cover", src: "/assets/projects/sehat/cover.webp", alt: "Sehat healthcare landing page" },
         { id: "services", label: "Services", src: "/assets/projects/sehat/screenshots/Screenshot 2026-11-05 at 2.50.10 PM.webp", alt: "Sehat lab tests, doctor consultations, and medicine service cards" },
@@ -124,7 +110,7 @@ export const portfolioData = {
     {
       id: "voice-controlled", name: "Voice Controlled", category: "Web Development / IoT / Robotics", date: "January 2026", status: "Browser-to-ESP32 robot interface",
       aliases: ["voice controlled", "voice control", "voice controlled robot", "robot voice ai", "robot website", "robotics", "robot", "esp32", "hardware project", "iot project"],
-      liveDemoUrl: "", githubUrl: "",
+      liveDemoUrl: "https://wifi-control-robo.vercel.app/", githubUrl: "https://github.com/Shaaz-55/wifi-control-robo",
       images: [
         { id: "cover", label: "Controls", src: "/assets/projects/voice-controlled/cover.webp", alt: "Voice Controlled robot interface with movement commands and microphone input" },
       ],
@@ -142,7 +128,7 @@ export const portfolioData = {
       id: "y-pay", name: "Y-Pay", category: "Web Application / Personal Finance", date: null, status: "Interface documented in supplied screenshots; deployment details not yet supplied",
       aliases: ["y pay", "ypay", "wallet project", "expense splitting", "payment project"],
       description: "A personal-finance interface for a wallet, transaction history, and splitting shared expenses.",
-      liveDemoUrl: "", githubUrl: "", technologies: [],
+      liveDemoUrl: "https://ypay-eight.vercel.app/", githubUrl: "https://github.com/Shaaz-55/the-ypay", technologies: [],
       images: [
         { id: "cover", label: "Dashboard", src: "/assets/projects/y-pay/cover.webp", alt: "Y-Pay dashboard with wallet balance and recent transactions" },
         { id: "split", label: "Split expenses", src: "/assets/projects/y-pay/screenshots/Screenshot 2026-11-05 at 2.48.41 PM.webp", alt: "Y-Pay shared expense form for selecting a group, amount, payer, and participants" },

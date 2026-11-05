@@ -71,7 +71,7 @@ function projectResponse(project, text) {
     ? `${project.challenge} ${wasteMetrics()}`
     : `A project-specific testing record for ${project.name} isn't currently available. I can explain its documented implementation, but I won't claim test coverage or results that haven't been supplied.`;
   else if (aspect === "date") content = project.date ? `${project.name} is dated ${project.date} in my portfolio. ${project.status}.` : `I haven't supplied a date for ${project.name}. ${project.status}.`;
-  else if (aspect === "status") content = `${project.name}: ${project.status}. ${project.id === 'aayam' ? project.contribution : ''}`;
+  else if (aspect === "status") content = `${project.name}: ${project.status}.`;
   else if (aspect === "monetisation") content = project.monetisation || `I haven't supplied an executed business model for ${project.name}. Hypothetically, I'd first validate the problem and repeated use before testing willingness to pay; this is a proposal, not revenue already earned.`;
   else content = project[aspect] || `That specific detail isn't supplied for ${project.name}. ${project.contribution}`;
   const selectedImage = project.images?.find(image => includesPhrase(text, image.id) || includesPhrase(text, `${image.id}s`) || includesPhrase(text, image.label))?.id || "cover";
@@ -95,7 +95,7 @@ function intentResponse(id, previousContext) {
 export function findResponse(question, context = emptyConversationContext()) {
   const text = normaliseQuestion(question);
   const rule = intentRules.find((candidate) => candidate.patterns.some((pattern) => pattern.test(text)));
-  // AAYAM can refer to a website or event leadership; explicit event questions win.
+  // AAYAM event leadership questions win for leadership topics.
   if (/\b(aayam|techfest|robo soccer|line maze)\b/.test(text) && /\b(leadership|led|lead|organis\w*|organiz\w*|event lead|activities)\b/.test(text)) {
     return intentResponse("leadership", context);
   }
