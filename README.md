@@ -1,118 +1,142 @@
 # PROJECT SHAaz
+### Don't just read my portfolio. Interrogate it.
 
-An interactive portfolio for Shaaz Hemani inside the original green intelligence facility. Physical CRT and side monitors, tall server cabinets, and a mechanical keyboard surround the existing stylised 3D character and personal knowledge base. The enlarged central display gives more space to readable conversation text. Responses remain local and predefined.
+[**Explore the Live Experience →**](https://thisisshaaz.vercel.app/)
 
-## Run
+---
 
-Requires Node.js 20.19+ or 22.12+.
+## The idea
 
-```sh
-npm install
-npm run dev
-npm run build
-```
+Most portfolios follow the same formula: a profile picture, a list of skills, a few projects, and a downloadable resume.
 
-Open the local URL printed by Vite. `npm run preview` serves the production build.
+I wanted to challenge that idea.
 
-## Voice interaction
+What if a portfolio wasn't something you simply scrolled through, but an experience you could interact with?
 
-- Microphone access starts only when the visitor clicks the microphone. Both `SpeechRecognition` and `webkitSpeechRecognition` are supported.
-- Partial and final recognition results appear in a live preview. Stop finishes recognition; Cancel discards the recording and preserves the original typed draft.
-- Final text is inserted at the saved selection in the existing input. It is never automatically submitted. Visitors can edit it, discard it, or send it with Enter or the Send button. The 500-character limit is preserved.
-- While recording, input editing and submission are temporarily locked to prevent transcript conflicts. They return immediately after cancellation or errors.
-- Permission denial, missing microphones, no speech, unsupported languages, and recognition network errors have readable text fallbacks.
-- Recordings stop when the tab is hidden, on page exit, on unmount, or after 60 seconds. A timeout releases native implementations that fail to report completion.
-- Answers never autoplay, including when sound effects are enabled. Each completed answer has a **Listen to response** control and a visible stop control during playback. New playback cancels the previous playback; recording and playback cannot run together.
-- The avatar speaks only during actual synthesis playback events. Silent text streaming never moves its mouth. End, stop, error, and page hiding stop speech animation and the waveform.
+What if, instead of searching through sections to understand someone, you could just ask them a question?
 
-Browser recognition often uses the browser vendor's online speech service; availability depends on the browser, OS, permissions, and connection. Use HTTPS in deployment or localhost in development. The recording waveform is an animated activity indicator, not a measured audio level. Responses use Fish Audio MP3 playback through /api/tts; there is no browser TTS fallback. Mouth movement is approximate, not phoneme-level lip sync.
+That thought became **PROJECT SHAaz** — an interactive personal intelligence interface built around a digital representation of me.
 
-Fish Audio runs on the server using FISH_API_KEY and FISH_VOICE_ID. Development reads the local server environment, including .env.local; restart Vite after updating credentials. Vercel Production credentials do not update your local environment. Never use VITE_ prefixes for these secrets. The current local configuration successfully generated an MP3 during the November 2026 update; no environment file was changed.
+Rather than presenting my journey as a static document, I wanted visitors to explore it through conversation, curiosity and discovery.
 
-## Independent replacement boundaries
+**The goal is simple: make getting to know a developer as interesting as exploring the things they build.**
 
-| Component        | Replacement point                                                          | Contract                                                                                                                                                             |
-| ---------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Avatar asset     | `public/models/avatar-config.json`, `src/components/avatar/avatarModel.js` | Loader returns `{ root, kind, clips, config, dispose }`; the temporary model also exposes its animation rig.                                                         |
-| Avatar animation | `src/components/avatar/avatarAnimation.js`                                 | Factory accepts a loaded model and returns `{ update(time, state, reducedMotion), dispose }`. States: `idle`, `listening`, `thinking`, `speaking`.                   |
-| Recognition      | `src/services/browserRecognition.js`                                       | `{ supported, start({ onStart, onResult, onEnd, onError, lang }) }`; start returns `{ stop, cancel }`. Results are `{ final, interim }`; end supplies `{ text }`.    |
-| Speech output    | `src/services/fishAudioSynthesis.js`                                         | `{ supported, speak(text, { onStart, onEnd, onError }) }`; speak returns `{ stop }`. Call `onStart` when audio actually starts, and `onEnd`/`onError` when it stops. |
-| Conversation     | `src/services/mockConversationService.js`                                  | `reply(question, { signal, context })` resolves `{ content, topic, links, projects, context }`. Honour cancellation and keep history scoped to the conversation.               |
+## Inside the intelligence facility
 
-The defaults are wired in `src/services/interactionServices.js`. `App` also accepts a `services` prop for provider injection. Voice hooks own UI state and lifecycle cleanup; providers own native resources and must suppress callbacks after cancellation. `DigitalAvatar` independently accepts `modelLoader`, `animationFactory`, and `configUrl` props. No speech service imports the avatar or conversation components.
+The interface takes inspiration from cinematic intelligence rooms, futuristic computer systems and retro-futuristic control facilities.
 
-Fish Audio receives model s2.1-pro-free as an HTTP header, the environment's voice ID as reference_id, and format mp3. Compare the same model and clone in Fish Audio Playground. Robotic output there means the clone or source recording needs improvement; frontend code cannot repair that quality.
+Every screen has a purpose. The central display is where visitors interact with my digital twin, while the surrounding intelligence panels provide access to different parts of my identity, work and journey.
 
-## Replace the temporary character
+But the visual design is only the beginning.
 
-1. Put your front-facing GLB in `public/models/shaaz-avatar.glb`.
-2. In `public/models/avatar-config.json`, set `modelUrl` to `/models/shaaz-avatar.glb` and `kind` to `custom`.
-3. Adjust `height`, `offsetY`, `rotationY` (degrees), `cameraPosition`, and `cameraTarget` in the same file as needed. Bust or waist-up models suit the stage best.
-4. Map any embedded clips using `animations.idle`, `listening`, `thinking`, and `speaking`. Map the mouth blendshape with `morphs.mouth`; `jawOpen` and `mouthOpen` work by default. Standard blink morphs and common head bones are supported. Missing clips retain gentle procedural movement.
+The real idea is to make the experience respond to the visitor.
 
-The default `procedural` mode builds the current character in `AvatarGeometry.js`, with materials in `AvatarMaterials.js`. Its beard and moustache use soft charcoal tones; hair, geometry, camera, and lighting are preserved. Invalid or missing custom assets keep this procedural character. Unavailable WebGL displays a static portrait while all conversation and input controls continue working.
+Ask about a project, explore my technical interests, learn about my experiences or challenge the assistant with an unexpected question.
 
-The optional bundled portrait-study GLB is **not Shaaz's likeness**. Its adapted head geometry is © I-R Entertainment Ltd., by Lee Perry-Smith / Infinite-Realities, under CC BY 3.0. See [source credits](public/models/ATTRIBUTION.md). The default procedural character does not load that GLB.
+Instead of forcing everyone through the same portfolio journey, the visitor decides what they want to discover.
 
-## Preserved functionality
+## Who is Shaaz?
 
-Personal facts and retained project descriptions in `src/data/` are preserved. Physical and virtual keyboard insertion, selections, Unicode backspace, Shift, symbols, Space, Enter, press animations, and Shift+Enter remain supported. Contact responses expose the supplied links. The virtual keyboard collapses on mobile and when a native keyboard reduces the visual viewport. Small screens use a scrollable stacked layout instead of shrinking conversation text.
+I'm Shaaz Hemani, a Computer Science Engineering student at Newton School of Technology, SVYASA University.
 
-The recovered facility environment uses lightweight CSS, with Three.js reserved for the character. The portrait occupies 25% of the CRT content grid and its canvas is scaled uniformly to 82%; the conversation receives 74%, with a 1% gap. The side monitors are moderately larger, the CRT is taller, and the keyboard is shorter. Microphone and Send controls share rectangular styling. The avatar is loaded separately, capped near 30 FPS and 1.65 pixel ratio, paused in background tabs, and respects reduced motion. Fonts are bundled. There are no new runtime dependencies.
+I'm a builder, experimenter and aspiring founder.
 
-## Verification
+I enjoy working at the intersection of software engineering, artificial intelligence, robotics and product thinking.
 
-```sh
-npm test
-npm run build
-# While the dev server is running:
-npm run test:browser
-# If Vite selected a different port:
-APP_URL=http://127.0.0.1:5174 npm run test:browser
-```
+What excites me most isn't simply learning a technology. It's understanding a problem, figuring out how technology can help, and turning that idea into something tangible.
 
-The browser suite uses installed Google Chrome on macOS; elsewhere install Playwright Chromium or set `CHROME_PATH`. Screenshots and reports are written to ignored `artifacts/`.
+I'm particularly interested in building products that solve meaningful problems and have the potential to grow beyond prototypes.
 
-Checks cover nine viewport sizes, keyboard regression behavior, project galleries, interview categories, resume opening and downloading, local responses and contact links, internal scrolling, reset, reduced motion, WebGL fallback, and the complete voice lifecycle. Recognition and HTML Audio doubles provide deterministic lifecycle tests. An optional real MP3 fixture verifies decoding, playback, stop, replay, and completion. Tests never request a real microphone or call a recognition service. Actual microphone permission prompts, recognition accuracy, and audible clone quality require a manual check on the target device.
+## Things I've been building
 
-## Green design recovery
+My projects reflect different problems and areas of experimentation.
 
-See [the recovery audit](docs/design-recovery.md) for the original source commit, backup location, preserved functionality, and the missing showcase assets identified during inspection.
+### UniBuddy — Connecting students beyond campus boundaries
 
-The existing `scripts/verify.mjs` and `scripts/verify-voice.mjs` were retained without changes during this recovery. Additional layout and archive checks can be run against the same development server:
+A student-focused platform exploring campus discovery, navigation and peer learning.
 
-```sh
-node scripts/verify-recovery.mjs --url=http://127.0.0.1:5174
-```
+It brings together interactive campus maps, guided routes and the idea of connecting students with experienced seniors.
 
+### LogiSense — Thinking beyond shipment tracking
 
-## Projects, resume, and interview archive
+A smart supply-chain intelligence prototype developed for the Google Solution Challenge.
 
-The portfolio includes UniBuddy, Household Waste Classification Using AI, LogiSense, AAYAM Techfest Website, Sehat, Voice Controlled, and Y-Pay. Project responses carry structured metadata to the showcase. All projects have cards, and the collection adapts to the available width. Thumbnails select a larger preview; clicking the preview opens a keyboard-dismissible dialog. Gallery answers open at the beginning of the new response rather than skipping to its bottom.
+The idea is to look beyond where a shipment is and consider what could delay it, combining tracking information with weather, disruption data and alternative routes.
 
-All supplied images are present: five for UniBuddy, four for Sehat, one for Voice Controlled, and three for Y-Pay. Original filenames and bytes are retained under `public/assets/projects/`. LogiSense's planned cover is still missing; the waste classifier and AAYAM have no supplied screenshots. Cards with no screenshots render their documented text and links without empty image placeholders.
+### Household Waste Classification — Exploring practical AI
 
-UniBuddy's existing links are retained. The waste classifier's GitHub URL comes from the supplied resume. Other missing URL fields remain empty. Y-Pay's stack and backend details are not documented; its description is limited to the supplied interface screenshots. See the [complete update and missing-link list](docs/portfolio-update.md).
+An image-classification project focused on identifying recyclable household waste.
 
-The right archive monitor opens `public/assets/resume/shaaz-hemani-resume.pdf` in a new tab. Asking for the resume also supplies a download link. The PDF and project screenshots belong in Git; `.env` files, credentials, and private key files remain ignored.
+It allowed me to explore model training, evaluation, uncertainty handling and the gap between building an ML model and making it useful.
 
-**Browse interview questions** opens a compact directory of 32 prompts across five categories. The four original homepage suggestions remain. Answers distinguish documented experience from proposed approaches and explicitly acknowledge unavailable stories, role details, or project information.
+These projects represent different parts of my journey: building products, experimenting with AI and solving problems through engineering.
 
-## Fish Audio verification
+There is more to explore in the archive.
 
-With the server configured, run:
+## How I think about building
 
-```sh
-npm run dev
-# In another terminal:
-node scripts/test-tts.mjs http://127.0.0.1:5173
-npm test
-npm run build
-npm run test:browser
-```
+I don't believe every good idea starts with a perfect plan.
 
-The live test generates “Hi, I'm Shaaz. Welcome to my portfolio.” and saves `artifacts/fish-audio-test.mp3`. Listen to it and compare it with the same clone and model in Fish Audio Playground. Robotic output in Playground concerns the clone or source recording; working website playback does not establish improved voice quality. The isolated legacy `browserSynthesis.js` adapter is not imported by the active provider and is absent from the production playback bundle.
+My approach is to:
 
-Run only the six UniBuddy gallery questions, thumbnail interactions, desktop/mobile preview and missing-image checks with `npm run test:browser -- --showcase`. The complete browser suite includes those checks plus the new projects, interview directory, and resume. To test actual MP3 decoding and playback with the generated file, run `MP3_FIXTURE=artifacts/fish-audio-test.mp3 npm run test:browser`. Fixture playback uses a mocked endpoint and does not contact Fish Audio again. Set `APP_URL` if Vite uses a different port.
+- Start with a problem worth understanding.
+- Explore different ways of solving it.
+- Build something tangible rather than staying stuck in planning.
+- Test assumptions and learn from what doesn't work.
+- Improve the product through iteration.
 
-For deployment, commit the intended code and `public/assets/` files and push the current branch to the existing GitHub remote. The repository's connected Vercel project deploys through its Git integration; both Fish variables must remain server-side Production environment variables.
+I value curiosity, experimentation, ownership and the ability to learn unfamiliar things.
+
+I'm still learning, and I don't pretend to be an expert in everything I use. I would rather show what I've built, explain what I've learned and be honest about what I still need to improve.
+
+## Why a digital twin?
+
+The assistant isn't intended to replace me or pretend to know everything about me.
+
+It's an alternative way of exploring my portfolio.
+
+It draws from my personal knowledge base, projects, skills and experiences to help visitors find relevant information through natural questions.
+
+I wanted the experience to communicate something important about how I see technology:
+
+**Technology should make interactions more natural, not more complicated.**
+
+## Try interrogating the system
+
+Here are a few questions to get started:
+
+- Who is Shaaz?
+- What is the most interesting thing you've built?
+- Explain UniBuddy.
+- What did you learn from LogiSense?
+- Which technical area interests you most?
+- What is your biggest engineering challenge?
+- What would you build with unlimited resources?
+- What are your long-term ambitions?
+
+Or ask something completely unexpected.
+
+Curiosity is encouraged.
+
+## Looking ahead
+
+I want to keep exploring the relationship between technology, creativity and entrepreneurship.
+
+My long-term ambition is to build meaningful products, work with ambitious people and eventually create a company that solves problems at a much larger scale.
+
+PROJECT SHAaz is one small expression of that mindset.
+
+It's not a finished story. It's a living representation of what I'm learning, building and working towards.
+
+---
+
+## Let's connect
+
+**Shaaz Hemani**
+
+- [Portfolio](https://thisisshaaz.vercel.app/)
+- [GitHub](https://github.com/Shaaz-55)
+- [LinkedIn](https://linkedin.com/in/shaaz-hemani-229150276/)
+- [Email](mailto:shaaz23hemani@gmail.com)
+
+*Built with curiosity. Driven by experimentation. Always under construction.*
